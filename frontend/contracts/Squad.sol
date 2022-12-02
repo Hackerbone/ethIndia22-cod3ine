@@ -52,7 +52,7 @@ contract Squad {
     function createGroup(string memory _groupName) public {
         require(msg.sender == admin, "Only admin can create groups");
         require(bytes(_groupName).length > 0, "Group name cannot be empty");
-        // check if group already exists
+
         require(
             groupMap[_groupName].members.length == 0,
             "Group already exists"
@@ -80,6 +80,17 @@ contract Squad {
             }
         }
         require(employeeExists, "Employee does not exist");
+        require(
+            bytes(groupMap[_groupName].name).length > 0,
+            "Group does not exist"
+        );
+        // check if employee is already in the group
+        Group storage group = groupMap[_groupName];
+        for (uint i = 0; i < group.members.length; i++) {
+            if (group.members[i] == _employeeAddress) {
+                revert("Employee already exists in the group");
+            }
+        }
         groupMap[_groupName].members.push(_employeeAddress);
     }
 
@@ -91,6 +102,14 @@ contract Squad {
         require(
             msg.sender == admin,
             "Only admin can delete employees from groups"
+        );
+        require(
+            bytes(groupMap[_groupName].name).length > 0,
+            "Group does not exist"
+        );
+        require(
+            bytes(employeeNames[_employeeAddress]).length > 0,
+            "Employee does not exist"
         );
         Group storage group = groupMap[_groupName];
         for (uint i = 0; i < group.members.length; i++) {
@@ -116,6 +135,13 @@ contract Squad {
                 break;
             }
         }
+        // check for null address
+        require(_fileAddress != address(0), "File address is required");
+        require(bytes(_fileName).length > 0, "File name cannot be empty");
+        require(
+            bytes(groupMap[_groupName].name).length > 0,
+            "Group does not exist"
+        );
         require(
             memberExists || msg.sender == admin,
             "Only admin or members of group can add files to group"
@@ -129,6 +155,12 @@ contract Squad {
         string memory _groupName,
         address _fileAddress
     ) public {
+        require(_fileAddress != address(0), "File address is required");
+        require(
+            bytes(groupMap[_groupName].name).length > 0,
+            "Group does not exist"
+        );
+
         Group storage group = groupMap[_groupName];
         bool memberExists = false;
         for (uint i = 0; i < group.members.length; i++) {
@@ -141,6 +173,7 @@ contract Squad {
             memberExists || msg.sender == admin,
             "Only admin or members of group can delete files from group"
         );
+
         for (uint i = 0; i < group.files.length; i++) {
             if (group.files[i] == _fileAddress) {
                 group.files[i] = group.files[group.files.length - 1];
@@ -154,6 +187,10 @@ contract Squad {
     function getFilesInGroup(
         string memory _groupName
     ) public view returns (address[] memory, string[] memory) {
+        require(
+            bytes(groupMap[_groupName].name).length > 0,
+            "Group does not exist"
+        );
         Group storage group = groupMap[_groupName];
         string[] memory fileNamesInGroup = new string[](group.files.length);
         for (uint i = 0; i < group.files.length; i++) {
@@ -183,6 +220,11 @@ contract Squad {
     function getEmployeesInGroup(
         string memory _groupName
     ) public view returns (Employee[] memory) {
+        // check if group exists
+        require(
+            bytes(groupMap[_groupName].name).length > 0,
+            "Group does not exist"
+        );
         Group storage group = groupMap[_groupName];
         Employee[] memory employees = new Employee[](group.members.length);
         for (uint i = 0; i < group.members.length; i++) {
