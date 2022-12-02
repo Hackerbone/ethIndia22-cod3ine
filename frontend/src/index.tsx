@@ -6,6 +6,7 @@ import { SmartAccountProvider } from "./contexts/SmartAccountContext";
 import { Web3ContextProvider } from "ethers-react";
 import { createBrowserRouter, RouterProvider, Route } from "react-router-dom";
 import Connect from "./page/Connect";
+import Dashboard from "./page/Dashboard";
 const element = document.getElementById("root");
 const root = createRoot(element!);
 const router = createBrowserRouter([
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
   {
     path: "/connect",
     element: <Connect />,
+  },
+  {
+    path: "/dashboard",
+    element: <Dashboard />,
   },
 ]);
 const Index = () => {
