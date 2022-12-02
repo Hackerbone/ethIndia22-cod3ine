@@ -1,3 +1,5 @@
+// error - ./node_modules/@biconomy/web3-auth/dist/src/style.css
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -10,6 +12,10 @@ const nextConfig = {
         // crypto: require.resolve("crypto-browserify"),
       };
     }
+
+    config.plugins = config.plugins || [];
+    config.ignoreWarnings = [/Failed to parse source map/];
+
     return config;
   },
 };
