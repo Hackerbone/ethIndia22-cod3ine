@@ -2,10 +2,7 @@ import { Contract } from "@ethersproject/contracts";
 import { useWeb3React } from "@web3-react/core";
 import { useMemo } from "react";
 
-export default function useContract<T extends Contract = Contract>(
-  address: string,
-  ABI: any
-): T | null {
+export default function useContract(address, ABI) {
   const { library, account, chainId } = useWeb3React();
 
   return useMemo(() => {
@@ -20,5 +17,5 @@ export default function useContract<T extends Contract = Contract>(
 
       return null;
     }
-  }, [address, ABI, library, account]) as T;
+  }, [address, ABI, library, account, chainId]);
 }
