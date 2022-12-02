@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { ethers } from "ethers";
 import SocialLogin, { getSocialLoginSDK } from "@biconomy/web3-auth";
 import { activeChainId } from "../utils/chainConfig";
+import { useMetaMask } from "ethers-react";
 
 interface web3AuthContextType {
   connect: () => Promise<SocialLogin | null | undefined>;
