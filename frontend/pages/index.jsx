@@ -18,14 +18,14 @@ function Home() {
   return (
     <div>
       <Head>
-        <title>next-web3-boilerplate</title>
+        <title>SQUAD</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <header>
         <nav>
           <Link href="/">
-            <a>next-web3-boilerplate</a>
+            <a>SQUAD</a>
           </Link>
 
           <Account triedToEagerConnect={triedToEagerConnect} />
@@ -33,12 +33,7 @@ function Home() {
       </header>
 
       <main>
-        <h1>
-          Welcome to{" "}
-          <a href="https://github.com/mirshko/next-web3-boilerplate">
-            next-web3-boilerplate
-          </a>
-        </h1>
+        <h1>Welcome to SQUAD</h1>
 
         {isConnected && (
           <section>
