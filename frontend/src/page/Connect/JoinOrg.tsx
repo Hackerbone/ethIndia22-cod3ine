@@ -1,8 +1,14 @@
 import React from "react";
-import { Form } from "antd";
+import { Form, Input } from "antd";
 
 function JoinOrg() {
-  return <Form></Form>;
+  return (
+    <Form>
+      <Form.Item>
+        <Input placeholder="Organization Name" />
+      </Form.Item>
+    </Form>
+  );
 }
 
 export default JoinOrg;
