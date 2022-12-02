@@ -9,15 +9,15 @@ import CreateOrg from "./Connect/CreateOrg";
 export default function Connect() {
   const [formType, setFormType] = React.useState<string | null>(null);
 
-  const { address, connect, disconnect } = useWeb3AuthContext();
+  const { address, provider, connect, disconnect } = useWeb3AuthContext();
 
   const { setSelectedAccount } = useSmartAccountContext();
 
   const renderForm = () => {
     if (formType === "join") {
-      return <JoinOrg />;
+      return <JoinOrg provider={provider} />;
     } else if (formType === "create") {
-      return <CreateOrg />;
+      return <CreateOrg provider={provider} />;
     } else {
       return (
         <>

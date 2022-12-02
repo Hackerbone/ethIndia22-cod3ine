@@ -2,14 +2,19 @@ import React from "react";
 import { Button, Form, Input } from "antd";
 import { useNavigate } from "react-router-dom";
 
-function JoinOrg() {
+function JoinOrg({ provider }: { provider: any }) {
   const navigate = useNavigate();
 
   return (
-    <Form>
+    <Form
+      onFinish={(values) => {
+        console.log(values);
+        navigate("/dashboard");
+      }}
+    >
       <Form.Item>
         <Input placeholder="Organization Address" />
-        <Button onClick={() => navigate("/dashboard")}>Submit</Button>
+        <Button>Submit</Button>
       </Form.Item>
     </Form>
   );
