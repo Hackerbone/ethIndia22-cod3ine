@@ -1,6 +1,6 @@
 {
-  "name": "next-web3-boilerplate",
-  "version": "1.0.0",
+  "name": "frontend",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,28 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@biconomy/core-types": "^0.0.2",
     "@biconomy/smart-account": "^0.0.2",
-    "@ethersproject/bignumber": "^5.5.0",
-    "@ethersproject/contracts": "^5.5.0",
-    "@ethersproject/providers": "^5.5.2",
-    "@ethersproject/units": "^5.5.0",
-    "@ethersproject/wallet": "^5.5.0",
-    "@metamask/detect-provider": "^1.2.0",
-    "@metamask/onboarding": "^1.0.1",
-    "@reduxjs/toolkit": "^1.9.1",
-    "@web3-react/core": "^6.1.9",
-    "@web3-react/injected-connector": "^6.0.7",
-    "next": "12.1.0",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "react-query": "^3.39.2",
-    "react-redux": "^8.0.5",
-    "swr": "^1.2.0"
-  },
-  "devDependencies": {
-    "eslint": "8.8.0",
-    "eslint-config-next": "12.0.9",
-    "ethers": "^5.5.3",
-    "hardhat": "^2.12.3"
+    "@biconomy/web3-auth": "^0.0.2",
+    "@types/node": "18.11.10",
+    "@types/react": "18.0.26",
+    "@types/react-dom": "18.0.9",
+    "eslint": "8.28.0",
+    "eslint-config-next": "13.0.6",
+    "next": "13.0.6",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "typescript": "4.9.3"
   }
 }
