@@ -1,5 +1,4 @@
 import { ethers } from "ethers";
-import contract from "../contracts/Squad.json";
 import { create, IPFSHTTPClient } from "ipfs-http-client";
 const CryptoJS = require("crypto-js");
 
@@ -26,19 +25,8 @@ const provider: ethers.providers.Web3Provider =
 
 const signer: ethers.providers.JsonRpcSigner = provider.getSigner();
 
-export const handleFileUpload = async (
-  event: React.FormEvent<HTMLFormElement>
-) => {
+export const handleFileUpload = async (file: File) => {
   try {
-    // get public key
-    event.preventDefault();
-    const form = event.target as HTMLFormElement;
-    const files = (form[0] as HTMLInputElement).files;
-    if (!files || files.length === 0) {
-      return alert("No files selected");
-    }
-    const file = files[0];
-    // console.log(file);
     const b64data = await FiletoBase64(file);
 
     // KEY AND IV GENERATION
