@@ -14,14 +14,17 @@ const signer: ethers.providers.JsonRpcSigner = provider.getSigner();
 
 // create function to deploy contract
 export const deployContract = async (orgName: String) => {
-  const factory = new ethers.ContractFactory(
-    contract.abi,
-    contract.bytecode,
-    signer
-  );
-
-  const contractRes = await factory.deploy(orgName);
-  await contractRes.deployed();
-
-  return contract;
+  try {
+    const factory = new ethers.ContractFactory(
+      contract.abi,
+      contract.bytecode,
+      signer
+    );
+    const contractRes = await factory.deploy(orgName);
+    await contractRes.deployed();
+    localStorage.setItem("contractAddress", contractRes.address);
+    return contractRes;
+  } catch (error) {
+    console.log(error);
+  }
 };
