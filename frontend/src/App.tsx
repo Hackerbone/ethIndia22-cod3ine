@@ -17,7 +17,6 @@ import DashboardHome from "./page/Dashboard/DashboardHome";
 import AllFiles from "./page/Dashboard/AllFiles";
 import Trash from "./page/Dashboard/Trash";
 
-
 const App: React.FC = () => {
   const {
     // provider, ethersProvider, address,
@@ -66,18 +65,18 @@ const App: React.FC = () => {
       element: <Dashboard />,
       children: [
         {
-          path:"",
-          element: <DashboardHome />
+          path: "",
+          element: <DashboardHome />,
         },
         {
-          path:"files",
-          element: <AllFiles />
+          path: "files",
+          element: <AllFiles />,
         },
         {
-          path:"trash",
-          element: <Trash />
+          path: "trash",
+          element: <Trash />,
         },
-      ]
+      ],
     },
     {
       path: "*",

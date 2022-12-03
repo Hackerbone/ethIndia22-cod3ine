@@ -3,38 +3,34 @@ import React from "react";
 import { FaEthereum } from "react-icons/fa";
 import ModalComponent from "../common/ModalComponent";
 import SquadButton from "../common/SquadButton";
-import { addEmployee } from "../../services/services";
+import { addEmployeeToGroup } from "../../services/services";
 
-const InviteUsersModal = ({ show, setShow }: any) => {
+const InviteGroupUsersModal = ({ show, setShow, groupName }: any) => {
   return (
-    <ModalComponent
-      show={show}
-      setShow={setShow}
-      title="Invite User to Organisation"
-    >
+    <ModalComponent show={show} setShow={setShow} title="Invite User to Group">
       <Form
         style={{ marginTop: "5rem", marginBottom: "2rem" }}
         onFinish={async (value) => {
           console.log(value);
-          const res = await addEmployee(
-            value.employeeAddress,
-            value.employeeName
+          const res = await addEmployeeToGroup(
+            value.groupName,
+            value.employeeAddress
           );
           console.log("address added", res);
         }}
         layout="vertical"
       >
-        <Form.Item label="Employee Name" name="employeeName">
-          <Input
-            placeholder="User Name"
-            className="search-bar-common"
-            style={{ width: "100%" }}
-          />
-        </Form.Item>
         <Form.Item label="Employee Address" name="employeeAddress">
           <Input
             prefix={<FaEthereum />}
             placeholder="User Wallet Address"
+            className="search-bar-common"
+            style={{ width: "100%" }}
+          />
+        </Form.Item>{" "}
+        <Form.Item label="Group" name="groupName" initialValue={groupName}>
+          <Input
+            disabled
             className="search-bar-common"
             style={{ width: "100%" }}
           />
@@ -60,4 +56,4 @@ const InviteUsersModal = ({ show, setShow }: any) => {
   );
 };
 
-export default InviteUsersModal;
+export default InviteGroupUsersModal;

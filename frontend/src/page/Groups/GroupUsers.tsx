@@ -8,7 +8,8 @@ import SearchBar from "../../components/common/SearchBar";
 import SquadButton from "../../components/common/SquadButton";
 import TableComponent from "../../components/common/TableComponent";
 import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
-import InviteUsersModal from "../../components/Modals/InviteUsersModal";
+import InviteGroupUsersModal from "../../components/Modals/InviteGroupUserModal";
+import { getEmployeesInGroup } from "../../services/services";
 
 const GroupUsers = () => {
   const params = useParams();
@@ -82,15 +83,18 @@ const GroupUsers = () => {
   useEffect(() => {
     const getEmpInGroup = async () => {
       console.log(groupName);
-      //   const res = await getEmployeesInGroup();
-      //   console.log("Organisation details", res);
-      //   setData([
-      //     {
-      //       displayName: "Seturamen",
-      //       address: "1231239182798127",
-      //       role: "Owner",
-      //     },
-      //   ]);
+      if (!groupName) return;
+      const res = await getEmployeesInGroup(groupName);
+      console.log("Organisation details", res);
+      let valData = [...data];
+      res.forEach(async (val: any) => {
+        valData.push({
+          displayName: val.name,
+          address: val.addr,
+          role: "Member",
+        });
+      });
+      setData(valData);
     };
     getEmpInGroup();
   }, []);
@@ -110,7 +114,11 @@ const GroupUsers = () => {
         }
       />
       <TableComponent columns={columns} dataSource={data} />
-      <InviteUsersModal show={showModal} setShow={setShowModal} />
+      <InviteGroupUsersModal
+        show={showModal}
+        setShow={setShowModal}
+        groupName={groupName}
+      />
     </DashboardLayout>
   );
 };

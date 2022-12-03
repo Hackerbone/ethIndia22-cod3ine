@@ -162,6 +162,7 @@ export const getAllGroups = async () => {
       contract.abi,
       signer
     );
+    console.log(typeof (contractInstance.getGroupNames));
     const tx = await contractInstance.getGroupNames();
     return tx;
   } catch (error) {

@@ -32,6 +32,7 @@ const signer: ethers.providers.JsonRpcSigner = provider.getSigner();
 
 export const handleFileUpload = async (file: File, groupName: string) => {
   try {
+    console.log(groupName)
     // SETTING UP FOR ENCRYPTION OF FILE
     const arrayBuff: any = await FileToArrayBuffer(file);
     const key = CryptoJS.lib.WordArray.random(256 / 8);
@@ -62,11 +63,13 @@ export const handleFileUpload = async (file: File, groupName: string) => {
       // Ei
       employees.map(async (employee: any) => {
         // get public key of each employee in group
-        let account = employee.employeeAddress;
+        let account = employee.addr;
+        console.log("acc", account);
         let keyB64 = await window.ethereum.request({
           method: "eth_getEncryptionPublicKey",
           params: [account],
         });
+        console.log("asdasd", keyB64)
         let publicKey = Buffer.from(keyB64, "base64"); // PuKi
         // encrypt keyObj with each employee's public key
         const enc = encrypt({
@@ -81,7 +84,7 @@ export const handleFileUpload = async (file: File, groupName: string) => {
         ]);
         return {
           buf,
-          employeeAddress: employee.employeeAddress, // [{encrypted key, wallet address}]
+          employeeAddress: employee.addr, // [{encrypted key, wallet address}]
         };
       })
     );

@@ -1,4 +1,4 @@
-import { PlusOutlined, UserAddOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 import React, { useState, useEffect } from "react";
 import SearchBar from "../../components/common/SearchBar";
 import SquadButton from "../../components/common/SquadButton";
@@ -6,7 +6,7 @@ import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
 import { FiMoreVertical } from "react-icons/fi";
 import TableComponent from "../../components/common/TableComponent";
 import CreateGroupModal from "../../components/Modals/CreateGroupModal";
-import { Button, Dropdown, Menu } from "antd";
+import { Dropdown, Menu } from "antd";
 import { useNavigate } from "react-router-dom";
 import { getAllGroups } from "../../services/services";
 import AddUserGroupModal from "../../components/Modals/AddUserGroupModal";
@@ -39,7 +39,12 @@ const Groups = () => {
       dataIndex: "groupName",
       key: "groupName",
       render: (groupName: any) => (
-        <div className="orgtable-orgName">{groupName}</div>
+        <div
+          className="orgtable-orgName"
+          onClick={() => navigate(`/dashboard/${groupName}`)}
+        >
+          {groupName}
+        </div>
       ),
     },
     {
@@ -93,10 +98,10 @@ const Groups = () => {
       console.log("Organisation details", res);
       // change according to details from creater gro
       let tableData = [...data];
-      res.forEach((val: any[], ind: number) => {
+      res.forEach((val: string, ind: number) => {
         console.log(val);
         tableData.push({
-          groupName: val[0],
+          groupName: val,
           files: 4,
           users: 3,
         });
