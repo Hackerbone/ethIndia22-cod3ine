@@ -23,15 +23,20 @@ contract Squad {
     }
 
     struct Group {
-        string name;
-        address[] members;
-        address[] files;
+        string name; // group name
+        address[] members; // group members
+        File[] files; // group files
     }
 
-    Group[] public groups;
-    mapping(string => Group) public groupMap;
-    mapping(address => string) public fileNames;
+    Group[] public groups; // array of all public groups
+    mapping(string => Group) public groupMap; // group name to group mapping
 
+    struct File {
+        string name;
+        string encfilehash;
+        string enckeyshash;
+    }
+    
     constructor(string memory _orgName) {
         require(bytes(_orgName).length > 0, "Organization name is required");
         admin = payable(msg.sender);
@@ -106,7 +111,7 @@ contract Squad {
         Group memory newGroup = Group(
             _groupName,
             new address[](0),
-            new address[](0)
+            new File[](0)
         );
         groups.push(newGroup);
         groupMap[_groupName] = newGroup;
@@ -170,7 +175,44 @@ contract Squad {
     // add file to group, only allowed by admin or other members in group
     function addFileToGroup(
         string memory _groupName,
-        address _fileAddress,
+        string memory _fileName,
+        string memory _encfilehash,
+        string memory _enckeyshash
+    ) public {
+        Group storage group = groupMap[_groupName];
+        bool memberExists = false;
+        for (uint256 i = 0; i < group.members.length; i++) {
+            if (group.members[i] == msg.sender) {
+                memberExists = true;
+                break;
+            }
+        }
+        // check for file has and key hash being there
+        require(
+            bytes(_encfilehash).length > 0,
+            "Encrypted file hash is required"
+        );
+        require(
+            bytes(_enckeyshash).length > 0,
+            "Encrypted keys hash is required"
+        );
+        require(bytes(_fileName).length > 0, "File name cannot be empty");
+        require(
+            bytes(groupMap[_groupName].name).length > 0,
+            "Group does not exist"
+        );
+        require(
+            memberExists || msg.sender == admin,
+            "Only admin or members of group can add files to group"
+        );
+        group.files.push(
+            File(_fileName, _encfilehash, _enckeyshash)
+        );
+    }
+
+    // delete file from group, only allowed by admin or other members in group
+    function deleteFileFromGroup(
+        string memory _groupName,
         string memory _fileName
     ) public {
         Group storage group = groupMap[_groupName];
@@ -181,8 +223,6 @@ contract Squad {
                 break;
             }
         }
-        // check for null address
-        require(_fileAddress != address(0), "File address is required");
         require(bytes(_fileName).length > 0, "File name cannot be empty");
         require(
             bytes(groupMap[_groupName].name).length > 0,
@@ -190,37 +230,11 @@ contract Squad {
         );
         require(
             memberExists || msg.sender == admin,
-            "Only admin or members of group can add files to group"
-        );
-        group.files.push(_fileAddress);
-        fileNames[_fileAddress] = _fileName;
-    }
-
-    // delete file from group, only allowed by admin or other members in group
-    function deleteFileFromGroup(string memory _groupName, address _fileAddress)
-        public
-    {
-        require(_fileAddress != address(0), "File address is required");
-        require(
-            bytes(groupMap[_groupName].name).length > 0,
-            "Group does not exist"
-        );
-
-        Group storage group = groupMap[_groupName];
-        bool memberExists = false;
-        for (uint256 i = 0; i < group.members.length; i++) {
-            if (group.members[i] == msg.sender) {
-                memberExists = true;
-                break;
-            }
-        }
-        require(
-            memberExists || msg.sender == admin,
             "Only admin or members of group can delete files from group"
         );
-
         for (uint256 i = 0; i < group.files.length; i++) {
-            if (group.files[i] == _fileAddress) {
+            if (keccak256(bytes(group.files[i].name)) ==
+                keccak256(bytes(_fileName))) {
                 group.files[i] = group.files[group.files.length - 1];
                 group.files.pop();
                 break;
@@ -228,22 +242,17 @@ contract Squad {
         }
     }
 
-    // get all files with their filenames in a group
-    function getFilesInGroup(string memory _groupName)
+    // get all files by group name in array of File structure
+    function getFilesByGroup(string memory _groupName)
         public
         view
-        returns (address[] memory, string[] memory)
+        returns (File[] memory)
     {
         require(
             bytes(groupMap[_groupName].name).length > 0,
             "Group does not exist"
         );
-        Group storage group = groupMap[_groupName];
-        string[] memory fileNamesInGroup = new string[](group.files.length);
-        for (uint256 i = 0; i < group.files.length; i++) {
-            fileNamesInGroup[i] = fileNames[group.files[i]];
-        }
-        return (group.files, fileNamesInGroup);
+        return groupMap[_groupName].files;
     }
 
     // get all groups
