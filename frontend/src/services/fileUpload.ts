@@ -30,7 +30,7 @@ export const handleFileUpload = async (file: File) => {
     const b64data = await FiletoBase64(file);
 
     // KEY AND IV GENERATION
-    // console.log(b64data);
+    console.log(b64data);
     const buffer = CryptoJS.enc.Base64.parse(b64data);
     const key = CryptoJS.lib.WordArray.random(256 / 8);
     const iv = CryptoJS.lib.WordArray.random(128 / 8);
@@ -45,7 +45,9 @@ export const handleFileUpload = async (file: File) => {
       "decrypted_" + file.name
     );
     const pre_encryptedFile = new File([buffer.toString()], "pre_" + file.name);
-    // console.log(pre_encryptedFile, decryptedFileObject);
+    //get base64 of decryptedFileObject
+    console.log(buffer, decryptedFile);
+    console.log(pre_encryptedFile, decryptedFileObject);
 
     // UPLOAD TO IPFS
     // const fileAdded = await ipfsClient.add(file);
@@ -73,8 +75,13 @@ const AESDecryptFile = async (encryptedFile: any, secretKey: any, iv: any) => {
 
 const FiletoBase64 = (file: File) =>
   new Promise((resolve, reject) => {
-    const reader = new FileReader();
+    const reader: any = new FileReader();
     reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = (error) => reject(error);
+    reader.onloadend = () => {
+      const base64data = reader?.result
+        ?.replace("data:", "")
+        .replace(/^.+,/, "");
+      resolve(base64data);
+    };
+    reader.onerror = (error: any) => reject(error);
   });

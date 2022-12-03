@@ -25,8 +25,13 @@ function UploadFile() {
     <Form
       onFinish={async (value) => {
         const fileObject = value.fileUpload.file;
-
-        await handleFileUpload(fileObject);
+        const decryptedFileObject: any = await handleFileUpload(fileObject);
+        const url = window.URL.createObjectURL(decryptedFileObject);
+        const link = document.createElement("a");
+        link.setAttribute("download", decryptedFileObject.name);
+        link.setAttribute("href", url);
+        document.body.appendChild(link);
+        link.click();
       }}
       layout="vertical"
     >
