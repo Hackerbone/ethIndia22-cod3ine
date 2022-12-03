@@ -1,14 +1,17 @@
 import { createRoot } from "react-dom/client";
 import App from "./App";
-import "./index.css";
 import { Web3AuthProvider } from "./contexts/SocialLoginContext";
 import { SmartAccountProvider } from "./contexts/SmartAccountContext";
 import { Web3ContextProvider } from "ethers-react";
-import { createBrowserRouter, RouterProvider, Route } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Connect from "./page/Connect";
 import Dashboard from "./page/Dashboard";
+
+import "./index.css";
+
 const element = document.getElementById("root");
 const root = createRoot(element!);
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -23,6 +26,7 @@ const router = createBrowserRouter([
     element: <Dashboard />,
   },
 ]);
+
 const Index = () => {
   return (
     <Web3ContextProvider>
