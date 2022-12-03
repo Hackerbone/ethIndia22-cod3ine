@@ -5,8 +5,7 @@ import TableComponent from "../components/Table";
 function Groups() {
   return (
     <div>
-      <Layout>
-        <div>Dashboard</div>
+      <Layout route={"Manage Groups"}>
         <TableComponent />
       </Layout>
     </div>

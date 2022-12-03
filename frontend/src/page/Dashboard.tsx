@@ -5,7 +5,7 @@ import AddEmployee from "./DashboardPages/AddEmployee";
 function Dashboard() {
   return (
     <div>
-      <Layout>
+      <Layout route={"Dashboard"}>
         <AddEmployee />
       </Layout>
     </div>

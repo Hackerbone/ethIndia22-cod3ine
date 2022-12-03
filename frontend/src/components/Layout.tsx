@@ -8,7 +8,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { Button, MenuProps } from "antd";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Col } from "antd";
 import { useWeb3AuthContext } from "../contexts/SocialLoginContext";
 
 const { Header, Content, Sider } = Layout;
@@ -95,8 +95,16 @@ const LayoutComponent: React.FC<{
           hasSider
         >
           <div className="main-header-content">
-            <div className="main-header-title">{"xyz"} Organization</div>
-            <div className="main-header-subtitle">{route}</div>
+            <Col
+              style={{
+                marginLeft: "2rem",
+                lineHeight: "1.5",
+                marginTop: "5rem",
+              }}
+            >
+              <div className="main-header-title">{"xyz"} Organization</div>
+              <div className="main-header-subtitle">{route}</div>
+            </Col>
           </div>
           {address ? (
             <div className="wallet-address">

@@ -67,16 +67,13 @@ p {
 }
 
 .main-header-title {
-  font-size: 2rem;
-  font-weight: 600;
+  font-size: 1rem;
   color: #fb8500;
-  margin-left: 2rem;
 }
 
 .main-header-subtitle {
   font-size: 1.5rem;
   font-weight: 500;
-  margin-left: 1rem;
 }
 
 table {

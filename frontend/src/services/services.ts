@@ -48,3 +48,93 @@ export const joinOrganisation = async (orgAddress: string) => {
     console.log(error);
   }
 };
+
+// function to add employee to organisation
+export const addEmployee = async (
+  employeeAddress: string,
+  employeeName: string
+) => {
+  try {
+    const contractInstance = new ethers.Contract(
+      localStorage.getItem("contractAddress") || "",
+      contract.abi,
+      signer
+    );
+    const tx = await contractInstance.addEmployee(
+      employeeAddress,
+      employeeName
+    );
+    await tx.wait();
+    return tx;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// function to create a group
+export const createGroup = async (groupName: string) => {
+  try {
+    const contractInstance = new ethers.Contract(
+      localStorage.getItem("contractAddress") || "",
+      contract.abi,
+      signer
+    );
+    const tx = await contractInstance.createGroup(groupName);
+    await tx.wait();
+    return tx;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// function to add employee to group
+export const addEmployeeToGroup = async (
+  groupName: string,
+  employeeAddress: string,
+) => {
+  try {
+    const contractInstance = new ethers.Contract(
+      localStorage.getItem("contractAddress") || "",
+      contract.abi,
+      signer
+    );
+    const tx = await contractInstance.addEmployeeToGroup(
+      groupName,
+      employeeAddress
+    );
+    await tx.wait();
+    return tx;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// function to get all employees
+export const getAllEmployees = async () => {
+  try {
+    const contractInstance = new ethers.Contract(
+      localStorage.getItem("contractAddress") || "",
+      contract.abi,
+      signer
+    );
+    const tx = await contractInstance.getEmployees();
+    return tx;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// function to get all employees in a group 
+export const getEmployeesInGroup = async (groupName: string) => {
+  try {
+    const contractInstance = new ethers.Contract(
+      localStorage.getItem("contractAddress") || "",
+      contract.abi,
+      signer
+    );
+    const tx = await contractInstance.getEmployeesInGroup(groupName);
+    return tx;
+  } catch (error) {
+    console.log(error);
+  }
+}
