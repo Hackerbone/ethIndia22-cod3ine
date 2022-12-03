@@ -13,14 +13,15 @@ const provider: ethers.providers.Web3Provider =
 const signer: ethers.providers.JsonRpcSigner = provider.getSigner();
 
 // create function to deploy contract
-export const deployContract = async () => {
-  const factory: ethers.ContractFactory = new ethers.ContractFactory(
+export const deployContract = async (orgName: String) => {
+  const factory = new ethers.ContractFactory(
     contract.abi,
     contract.bytecode,
     signer
   );
 
-  const contractRes: ethers.Contract = await factory.deploy();
+  const contractRes = await factory.deploy(orgName);
+  await contractRes.deployed();
 
-  return contractRes;
+  return contract;
 };

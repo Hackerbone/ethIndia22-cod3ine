@@ -8,16 +8,17 @@ function CreateOrg({ provider }: { provider: any }) {
 
   return (
     <Form
-      onFinish={(values) => {
+      onFinish={async (values) => {
         console.log(values);
-        deployContract();
+        let res = await deployContract(values.orgName);
+        console.log(res);
         navigate("/dashboard");
       }}
     >
-      <Form.Item>
+      <Form.Item name="orgName">
         <Input placeholder="Organization Name" />
-        <Button htmlType="submit">Submit</Button>
       </Form.Item>
+      <Button htmlType="submit">Submit</Button>
     </Form>
   );
 }
