@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, Upload } from "antd";
 // import { useNavigate } from "react-router-dom";
 
 function AddEmployee() {
@@ -19,6 +19,12 @@ function AddEmployee() {
 
       <Form.Item name="employeeName">
         <Input placeholder="employeename" />
+      </Form.Item>
+
+      <Form.Item name="file">
+        <Upload>
+          <Button>Upload File</Button>
+        </Upload>
       </Form.Item>
 
       <Button htmlType="submit">Submit</Button>
