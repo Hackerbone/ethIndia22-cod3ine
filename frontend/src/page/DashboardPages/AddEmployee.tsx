@@ -6,7 +6,12 @@ import { handleFileUpload } from "../../services/fileUpload";
 
 function AddEmployee() {
   return (
-    <form onSubmit={handleFileUpload}>
+    <form
+      onSubmit={async (data) => {
+        const res = await handleFileUpload(data);
+        console.log(res);
+      }}
+    >
       <input name="file" type="file" />
       <button type="submit">Upload File</button>
     </form>

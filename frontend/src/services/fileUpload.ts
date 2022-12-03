@@ -38,27 +38,55 @@ export const handleFileUpload = async (
       return alert("No files selected");
     }
     const file = files[0];
-    console.log(file);
-    // generate key and iv
+    // console.log(file);
+    const b64data = await FiletoBase64(file);
+
+    // KEY AND IV GENERATION
+    // console.log(b64data);
+    const buffer = CryptoJS.enc.Base64.parse(b64data);
     const key = CryptoJS.lib.WordArray.random(256 / 8);
     const iv = CryptoJS.lib.WordArray.random(128 / 8);
-    const encryptedFile = await AESEncryptFile(file, key, iv);
-    console.log(encryptedFile);
-    // encrypt key with n public keys
-    // const encryptedKeys = await RSAencryptKey(key);
 
+    // ENCRYPT AND DECRYPT
+    const encryptedFile = await AESEncryptFile(buffer, key, iv);
+    const decryptedFile = await AESDecryptFile(encryptedFile, key, iv);
+
+    // SANITY CHECK
+    const decryptedFileObject = new File(
+      [decryptedFile.toString()],
+      "decrypted_" + file.name
+    );
+    const pre_encryptedFile = new File([buffer.toString()], "pre_" + file.name);
+    // console.log(pre_encryptedFile, decryptedFileObject);
+
+    // UPLOAD TO IPFS
     // const fileAdded = await ipfsClient.add(file);
     // console.log(fileAdded);
-    return true;
+    return decryptedFileObject;
   } catch (error) {
     console.log(error);
   }
 };
 
-const AESEncryptFile = async (buffer: File, secretKey: any, iv: any) => {
+const AESEncryptFile = async (buffer: any, secretKey: any, iv: any) => {
   console.log(buffer, secretKey, iv);
-  var ciphertext = CryptoJS.AES.encrypt(buffer, secretKey, {
+  var encrypted = CryptoJS.AES.encrypt(buffer, secretKey, {
     iv: iv,
   });
-  return ciphertext;
+  return encrypted;
 };
+
+const AESDecryptFile = async (encryptedFile: any, secretKey: any, iv: any) => {
+  var decrypted = CryptoJS.AES.decrypt(encryptedFile, secretKey, {
+    iv: iv,
+  });
+  return decrypted;
+};
+
+const FiletoBase64 = (file: File) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
