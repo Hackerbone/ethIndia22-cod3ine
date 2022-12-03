@@ -52,7 +52,7 @@ const ConnectSuccess = () => {
           Create a New Organization
         </SquadButton>
         <SquadButton
-          icon={<TbBuilding />}
+          icon={<TbBuilding style={{marginRight:10,marginBottom:-2}} />}
           style={{ padding: "0rem 3rem", marginTop: "2rem" }}
           onClick={() => navigate("/onboarding/join")}
         >

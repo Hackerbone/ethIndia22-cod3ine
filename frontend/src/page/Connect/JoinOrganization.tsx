@@ -1,5 +1,5 @@
 import { Form, Input, message, Row } from "antd";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageLoader from "../../components/common/PageLoader";
 import SquadButton from "../../components/common/SquadButton";
@@ -11,6 +11,8 @@ import { joinOrganisation } from "../../services/services";
 
 const JoinOrganization = () => {
   const navigate = useNavigate();
+  const [load,setLoad] = useState(false)
+
 
   const { address, loading: authLoading } = useWeb3AuthContext();
 
@@ -35,8 +37,9 @@ const JoinOrganization = () => {
       <Row style={{ display: "flex", flexDirection: "column" }}>
         <Form
           onFinish={async ({ orgAddress }) => {
+            setLoad(true)
             let res = await joinOrganisation(orgAddress);
-            console.log(res);
+            setLoad(false)
             navigate("/dashboard");
           }}
         >
@@ -48,8 +51,9 @@ const JoinOrganization = () => {
           </Form.Item>
           <SquadButton
             style={{ padding: "0rem 3rem", width: "fit-content" }}
-            icon={<TbBuilding style={{ marginRight: 10 }} />}
+            icon={<TbBuilding  style={{marginRight:10,marginBottom:-2}}  />}
             htmlType="submit"
+            loading={load}
           >
             Join a Organization
           </SquadButton>

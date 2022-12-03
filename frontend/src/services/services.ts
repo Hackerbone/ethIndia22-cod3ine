@@ -24,8 +24,10 @@ export const deployContract = async (orgName: String) => {
     await contractRes.deployed();
     localStorage.setItem("contractAddress", contractRes.address);
     return contractRes;
-  } catch (error) {
+    
+  } catch (error: any) {
     console.log(error);
+    throw new Error(error);
   }
 };
 
