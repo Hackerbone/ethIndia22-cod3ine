@@ -1,15 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-// PUSH Comm Contract Interface
-interface IPUSHCommInterface {
-    function sendNotification(
-        address _channel,
-        address _recipient,
-        bytes calldata _identity
-    ) external;
-}
-
 contract Squad {
     address admin;
     string orgName;
@@ -22,15 +13,21 @@ contract Squad {
         address addr;
     }
 
-    struct Group {
+    struct File {
         string name;
-        address[] members;
-        address[] files;
+        string encfilehash;
+        string enckeyshash;
     }
 
-    Group[] public groups;
-    mapping(string => Group) public groupMap;
-    mapping(address => string) public fileNames;
+    struct Group {
+        mapping(uint => File) files; // group files
+        string name; // group name
+        address[] members; // group members
+        uint fileCount; // number of files
+    }
+
+    Group[] public groups; // array of all groups
+    uint public groupCount; // number of groups
 
     constructor(string memory _orgName) {
         require(bytes(_orgName).length > 0, "Organization name is required");
@@ -61,25 +58,6 @@ contract Squad {
     function addEmployee(address _employeeAddress, string memory _employeeName)
         public
     {
-        IPUSHCommInterface(0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa)
-            .sendNotification(
-                0x3d6e6678E43ecd302867EE0c92bcBF2Fd6C60239, // from channel - recommended to set channel via dApp and put it's value -> then once contract is deployed, go back and add the contract address as delegate for your channel
-                _employeeAddress, // to recipient, put address(this) in case you want Broadcast or Subset. For Targetted put the address to which you want to send
-                bytes(
-                    string(
-                        // We are passing identity here: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/identity/payload-identity-implementations
-                        abi.encodePacked(
-                            "0", // this is notification identity: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/identity/payload-identity-implementations
-                            "+", // segregator
-                            "3", // this is payload type: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/payload (1, 3 or 4) = (Broadcast, targetted or subset)
-                            "+", // segregator
-                            "Title", // this is notificaiton title
-                            "+", // segregator
-                            "Body" // notification body
-                        )
-                    )
-                )
-            );
         require(msg.sender == admin, "Only admin can add employees");
         require(
             bytes(_employeeName).length > 0,
@@ -107,17 +85,7 @@ contract Squad {
         newGroup.name = _groupName;
         newGroup.fileCount = 0;
 
-        require(
-            groupMap[_groupName].members.length == 0,
-            "Group already exists"
-        );
-        Group memory newGroup = Group(
-            _groupName,
-            new address[](0),
-            new address[](0)
-        );
-        groups.push(newGroup);
-        groupMap[_groupName] = newGroup;
+        groupCount++;
     }
 
     // add an employee to a group by groupName
@@ -171,90 +139,53 @@ contract Squad {
     // add file to group, only allowed by admin or other members in group
     function addFileToGroup(
         string memory _groupName,
-        address _fileAddress,
-        string memory _fileName
+        string memory _fileName,
+        string memory _encfilehash,
+        string memory _enckeyshash
     ) public {
-        Group storage group = groupMap[_groupName];
-        bool memberExists = false;
-        for (uint256 i = 0; i < group.members.length; i++) {
-            if (group.members[i] == msg.sender) {
-                memberExists = true;
-                break;
-            }
-        }
-        // check for null address
-        require(_fileAddress != address(0), "File address is required");
-        require(bytes(_fileName).length > 0, "File name cannot be empty");
         require(
-            bytes(groupMap[_groupName].name).length > 0,
-            "Group does not exist"
+            bytes(employeeNames[msg.sender]).length > 0,
+            "Only employees can add files"
         );
-        require(
-            memberExists || msg.sender == admin,
-            "Only admin or members of group can add files to group"
-        );
-        group.files.push(_fileAddress);
-        fileNames[_fileAddress] = _fileName;
-    }
-
-    // delete file from group, only allowed by admin or other members in group
-    function deleteFileFromGroup(string memory _groupName, address _fileAddress)
-        public
-    {
-        require(_fileAddress != address(0), "File address is required");
-        require(
-            bytes(groupMap[_groupName].name).length > 0,
-            "Group does not exist"
-        );
-
-        Group storage group = groupMap[_groupName];
-        bool memberExists = false;
-        for (uint256 i = 0; i < group.members.length; i++) {
-            if (group.members[i] == msg.sender) {
-                memberExists = true;
-                break;
-            }
-        }
-        require(
-            memberExists || msg.sender == admin,
-            "Only admin or members of group can delete files from group"
-        );
-
-        for (uint256 i = 0; i < group.files.length; i++) {
-            if (group.files[i] == _fileAddress) {
-                group.files[i] = group.files[group.files.length - 1];
-                group.files.pop();
-                break;
+        for (uint256 i = 0; i < groups.length; i++) {
+            if (keccak256(bytes(groups[i].name)) == keccak256(bytes(_groupName))) {
+                for (uint256 j = 0; j < groups[i].members.length; j++) {
+                    if (groups[i].members[j] == msg.sender) {
+                        groups[i].files[groups[i].fileCount] = File(
+                            _fileName,
+                            _encfilehash,
+                            _enckeyshash
+                        );
+                        groups[i].fileCount++;
+                        return;
+                    }
+                }
+                revert("Only members can add files");
             }
         }
         revert("Group does not exist");
     }
 
-    // get all files with their filenames in a group
-    function getFilesInGroup(string memory _groupName)
+    // get all files by group name in array of File structure
+    function getFilesByGroup(string memory _groupName)
         public
         view
-        returns (address[] memory, string[] memory)
+        returns (File[] memory)
     {
-        require(
-            bytes(groupMap[_groupName].name).length > 0,
-            "Group does not exist"
-        );
-        Group storage group = groupMap[_groupName];
-        string[] memory fileNamesInGroup = new string[](group.files.length);
-        for (uint256 i = 0; i < group.files.length; i++) {
-            fileNamesInGroup[i] = fileNames[group.files[i]];
+        for (uint256 i = 0; i < groups.length; i++) {
+            if (keccak256(bytes(groups[i].name)) == keccak256(bytes(_groupName))) {
+                File[] memory files = new File[](groups[i].fileCount);
+                for (uint256 j = 0; j < groups[i].fileCount; j++) {
+                    files[j] = groups[i].files[j];
+                }
+                return files;
+            }
         }
-        return (group.files, fileNamesInGroup);
+        revert("Group does not exist");
     }
 
-    // get all group names
-    function getGroups() public view returns (string[] memory) {
-        string[] memory groupNames = new string[](groups.length);
-        for (uint256 i = 0; i < groups.length; i++) {
-            groupNames[i] = groups[i].name;
-        }
-        return groupNames;
+    function getGroups() public view returns (Group[] storage) {
+        return groups;
     }
 
     // get all employees with their names as employee array
