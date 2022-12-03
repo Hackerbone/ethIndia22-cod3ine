@@ -11,7 +11,7 @@ const Organisations = () => {
     {
       key: "1",
       orgName: "Bugbase Organisations",
-      address: "1231239182798127",
+      address: "No Address Found",
       employees: 3,
       role: "Owner",
     },

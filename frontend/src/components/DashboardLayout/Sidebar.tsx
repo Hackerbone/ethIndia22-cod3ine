@@ -1,78 +1,83 @@
-import { Divider, Menu } from 'antd'
-import React from 'react'
-import { BiBuildingHouse } from "react-icons/bi"
-import { NavLink, useLocation } from 'react-router-dom'
-import {MdOutlineGroups} from 'react-icons/md'
-import { UsergroupAddOutlined } from '@ant-design/icons'
+import { Divider, Menu } from "antd";
+import React from "react";
+import { BiBuildingHouse } from "react-icons/bi";
+import { NavLink, useLocation } from "react-router-dom";
+import { MdOutlineGroups } from "react-icons/md";
+import { UsergroupAddOutlined } from "@ant-design/icons";
 
 const Sidebar = () => {
-    const location = useLocation()
+  const location = useLocation();
 
+  const organisationMenuItems = [
+    {
+      key: "1",
+      icon: <BiBuildingHouse className="sidebar-nav-icon" />,
+      label: "Organisations",
+      path: "/organisations",
+    },
+  ];
 
-    const organisationMenuItems = [
-        {
-            key: '1',
-            icon: <BiBuildingHouse className="sidebar-nav-icon" />,
-            label: 'Organisations',
-            path: "/organisations"
-        }
-    ]
+  const groupsMenuItems = [
+    {
+      key: "1",
+      icon: <MdOutlineGroups className="sidebar-nav-icon" />,
+      label: "Groups",
+      path: "/groups",
+    },
+    {
+      key: "2",
+      icon: <UsergroupAddOutlined className="sidebar-nav-icon" />,
+      label: "Users",
+      path: "/organisations/users",
+    },
+  ];
 
-    const groupsMenuItems = [
-        {
-            key: '1',
-            icon: <MdOutlineGroups className="sidebar-nav-icon" />,
-            label: 'Groups',
-            path: "/groups"
-        },
-        {
-            key: '2',
-            icon: <UsergroupAddOutlined className="sidebar-nav-icon" />,
-            label: 'Users',
-            path: "/organisations/users"
-        },
+  return (
+    <div className="sidebar-sidebarContainer">
+      <div className="sidebar-logoContainer">
+        <div className="sidebar-logo">SQ</div>
+      </div>
 
-    ]
+      <Divider className="sidebar-divider" />
 
-    return (
-        <div className="sidebar-sidebarContainer">
-            <div className="sidebar-logoContainer">
-                <div className="sidebar-logo">SQ</div>
-            </div>
+      <div className="sidebar-menuContainer">
+        {location.pathname === "/organisations" ? (
+          <>
+            {organisationMenuItems.map((item, index) => (
+              <NavLink
+                to={item.path}
+                key={index}
+                className={(props) => (props.isActive ? "active-nav-item" : "")}
+              >
+                <div className="sidebar-nav-item">
+                  {item.icon}
+                  <div className="nav-text">{item.label}</div>
+                </div>
+              </NavLink>
+            ))}
+          </>
+        ) : null}
 
-            <Divider className="sidebar-divider" />
+        {location.pathname === "/organisations/users" ||
+        location.pathname.includes("/groups") ? (
+          <>
+            {groupsMenuItems.map((item, index) => (
+              <NavLink
+                to={item.path}
+                key={index}
+                className={(props) => (props.isActive ? "active-nav-item" : "")}
+              >
+                <div className="sidebar-nav-item">
+                  {item.icon}
+                  <div className="nav-text">{item.label}</div>
+                </div>
+              </NavLink>
+            ))}
+          </>
+        ) : null}
+      </div>
+    </div>
+  );
+};
 
-            <div className="sidebar-menuContainer">
-                {location.pathname === "/organisations" ? (
-                    <>
-                        {organisationMenuItems.map((item, index) => (
-                            <NavLink to={item.path} key={index} className={(props) => props.isActive ? 'active-nav-item' : ''}>
-                                <div className="sidebar-nav-item" >
-                                    {item.icon}
-                                    <div className="nav-text">{item.label}</div>
-                                </div>
-                            </NavLink>
-                        ))}
-                    </>
-                ) : null}
-
-
-                {location.pathname === "/organisations/users" || location.pathname.includes("/groups") ? (
-                    <>
-                        {groupsMenuItems.map((item, index) => (
-                            <NavLink to={item.path} key={index} className={(props) => props.isActive ? 'active-nav-item' : ''}>
-                                <div className="sidebar-nav-item" >
-                                    {item.icon}
-                                    <div className="nav-text">{item.label}</div>
-                                </div>
-                            </NavLink>
-                        ))}
-                    </>
-                ) : null}
-
-            </div>
-        </div>
-    )
-}
-
-export default Sidebar
+export default Sidebar;

@@ -68,12 +68,38 @@ export const Web3AuthProvider = ({ children }: any) => {
 
   const [userInfo, setUserInfo] = useState<any>(null);
 
+  const checkIfUserIsLoggedIn = async () => {
+    try {
+      const { ethereum } = window;
+
+      if (ethereum) {
+        const accounts = await ethereum.request({ method: "eth_accounts" });
+        if (accounts.length > 0) {
+          const address = accounts[0];
+          const chainId = await ethereum.request({
+            method: "eth_chainId",
+          });
+          const web3Provider = new ethers.providers.Web3Provider(ethereum);
+          const ethersProvider = new ethers.providers.Web3Provider(ethereum);
+
+          setWeb3State({
+            ...web3State,
+            address,
+            chainId,
+            web3Provider,
+            ethersProvider,
+          });
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // if wallet already connected close widget
   useEffect(() => {
-    if (socialLoginSDK && socialLoginSDK.provider) {
-      socialLoginSDK.hideWallet();
-    }
-  }, [socialLoginSDK]);
+    checkIfUserIsLoggedIn();
+  }, []);
 
   const connect = useCallback(async () => {
     if (address) return; // if already connected return

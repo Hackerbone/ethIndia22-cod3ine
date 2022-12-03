@@ -37,12 +37,13 @@ const CreateOrganisation = () => {
         <Form
           onFinish={async (values) => {
             try {
-
-              setLoad(true)
+              setLoad(true);
               let res = await deployContract(values.orgName);
               console.log("deployed", res);
-              setLoad(false)
-              navigate("/organisations");
+              setLoad(false);
+              if (res) {
+                navigate("/organisations");
+              }
             } catch (e) {
               navigate("/connect");
               message.error("Something went wrong");
