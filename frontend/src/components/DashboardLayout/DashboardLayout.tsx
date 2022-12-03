@@ -1,4 +1,3 @@
-import React from "react";
 import Sidebar from "./Sidebar";
 import "./DashboardLayout.css";
 import { Button, Row } from "antd";
@@ -63,7 +62,7 @@ const DashboardLayout = ({ children, headerExtra, title }: any) => {
           </div>
           {
             <h1 className="dashboardLayout-title">
-              Organisation - <span className="color-orange">{orgName}</span>
+              Organisation {orgName ? <span className="color-orange"> - {orgName}</span> : null}
             </h1>
           }
           {children}

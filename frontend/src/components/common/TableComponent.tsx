@@ -1,15 +1,16 @@
 import { Table } from 'antd'
 import React from 'react'
 
-const TableComponent = ({ dataSource, columns }: any) => {
+const TableComponent = ({ dataSource, columns, loading }: any) => {
     return (
         <div className="tablecomponent-main-container">
 
-        <Table
-            dataSource={dataSource} 
-            columns={columns}
-            pagination={false} />
-            </div>
+            <Table
+                loading={loading}
+                dataSource={dataSource}
+                columns={columns}
+                pagination={false} />
+        </div>
     )
 }
 
