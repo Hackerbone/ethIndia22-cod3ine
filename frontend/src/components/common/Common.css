@@ -15,3 +15,55 @@
     color: #000 !important;
     outline:2px solid #e5e5e555;
 }
+
+.tablecomponent-main-container {
+
+}
+
+.tablecomponent-main-container .ant-table .ant-table-thead .ant-table-cell{
+    border-bottom: 0;
+
+}
+
+.tablecomponent-main-container .ant-table-cell::before {
+    content: none !important;
+    background: none;
+}
+
+.tablecomponent-main-container .ant-table-tbody .ant-table-row  {
+    background: #E5E5E51A !important;
+    border: 2px solid #E5E5E5 !important;
+}
+
+.orgtable-orgName {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+
+}
+
+.orgtable-orgName:hover {
+    color: #fb8500;
+    text-decoration:underline;
+}
+
+.search-bar-common {
+    border: none;
+    border-radius:0;
+    height:2.7rem;
+    background-color: #E5E5E580;
+    width: fit-content;
+    min-width:36rem;
+}
+
+.search-bar-common .ant-input {
+    background-color: transparent;
+    margin-left:.5rem;
+
+}
+
+
+.modal-modal-component .ant-modal-header .ant-modal-title {
+    font-size:1.6rem;
+    color: #fb8500;
+}

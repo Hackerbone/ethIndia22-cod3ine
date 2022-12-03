@@ -40,7 +40,7 @@ const JoinOrganization = () => {
             setLoad(true)
             let res = await joinOrganisation(orgAddress);
             setLoad(false)
-            navigate("/dashboard");
+            navigate("/organisations");
           }}
         >
           <Form.Item name="orgAddress">
