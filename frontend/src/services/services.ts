@@ -224,4 +224,43 @@ export const getFilesByGroup = async (groupName: string) => {
   }
 };
 
+export const isPublicKeySet = async () => {
+  try {
+    const contractInstance = new ethers.Contract(
+      localStorage.getItem("contractAddress") || "",
+      contract.abi,
+      signer
+    );
+    const tx = await contractInstance.isPublicKeySet();
+    return tx;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const setPublicKey = async () => {
+  try {
+    const contractInstance = new ethers.Contract(
+      localStorage.getItem("contractAddress") || "",
+      contract.abi,
+      signer
+    );
+    const walletAddress = await signer.getAddress();
+    const publicKeyb64 = await window.ethereum.request({
+      method: "eth_getEncryptionPublicKey",
+      params: [walletAddress],
+    });
+    // convert base64 public key to bytes32
+    let buf = Buffer.from(publicKeyb64, "base64");
+    //convert buf to bytes32 compatbile
+    let publicKey = ethers.utils.hexlify(buf);
+    let publicKeyF = ethers.utils.formatBytes32String(publicKey);
+    console.log(publicKeyF);
+    const tx = await contractInstance.setPublicKey(publicKeyF);
+    return tx;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 // send notification via push protocol

@@ -8,7 +8,7 @@ import SearchBar from "../../components/common/SearchBar";
 import TableComponent from "../../components/common/TableComponent";
 import UploadFileModal from "../../components/Modals/UploadFileModal";
 import { handleDownloadData } from "../../services/fileUpload";
-import { getFilesByGroup } from "../../services/services";
+import { getFilesByGroup, setPublicKey } from "../../services/services";
 
 const DashboardHome = () => {
   const params = useParams();
@@ -167,6 +167,13 @@ const DashboardHome = () => {
       <h1 className="dashboardLayout-title" style={{ marginTop: "3rem" }}>
         Your Files
       </h1>
+      <Button
+        onClick={async () => {
+          await setPublicKey();
+        }}
+      >
+        SET PUBLIC KEY
+      </Button>
       <TableComponent dataSource={data} columns={columns} />
       <UploadFileModal show={show} setShow={setShow} />
     </div>
