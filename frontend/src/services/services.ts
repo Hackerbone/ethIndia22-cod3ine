@@ -250,13 +250,12 @@ export const setPublicKey = async () => {
       method: "eth_getEncryptionPublicKey",
       params: [walletAddress],
     });
-    // convert base64 public key to bytes32
     let buf = Buffer.from(publicKeyb64, "base64");
-    //convert buf to bytes32 compatbile
-    let publicKey = ethers.utils.hexlify(buf);
-    let publicKeyF = ethers.utils.formatBytes32String(publicKey);
-    console.log(publicKeyF);
-    const tx = await contractInstance.setPublicKey(publicKeyF);
+    // convert buffer to bytes32 ethersjs
+    let bytes32 = ethers.utils.hexlify(buf);
+    // let publicKeyF = ethers.utils.hexToBytes(publicKey);
+    console.log(bytes32);
+    const tx = await contractInstance.setPublicKey(bytes32);
     return tx;
   } catch (error) {
     console.log(error);
