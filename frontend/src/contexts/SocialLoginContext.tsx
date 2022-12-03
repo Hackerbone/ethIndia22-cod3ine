@@ -66,18 +66,18 @@ export const Web3AuthProvider = ({ children }: any) => {
     }
 
     // check if user is already logged in via metamask in window.ethereum
-    if (window.ethereum) {
-      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = web3Provider.getSigner();
-      signer.getAddress().then((address: string) => {
-        setWeb3State({
-          ...web3State,
-          web3Provider,
-          ethersProvider: web3Provider,
-          address,
-        });
-      });
-    }
+    // if (window.ethereum) {
+    //   const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+    //   const signer = web3Provider.getSigner();
+    //   signer.getAddress().then((address: string) => {
+    //     setWeb3State({
+    //       ...web3State,
+    //       web3Provider,
+    //       ethersProvider: web3Provider,
+    //       address,
+    //     });
+    //   });
+    // }
 
     // re save socialLoginSDK if not in state
   }, [address, socialLoginSDK, web3State]);
