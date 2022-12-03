@@ -25,7 +25,11 @@ function UploadFile() {
     <Form
       onFinish={async (value) => {
         const fileObject = value.fileUpload.file;
-        const decryptedFileObject: any = await handleFileUpload(fileObject);
+        const groupName = "hr";
+        const decryptedFileObject: any = await handleFileUpload(
+          fileObject,
+          groupName
+        );
 
         if (decryptedFileObject) {
           console.log("decryptedFileObject", decryptedFileObject);

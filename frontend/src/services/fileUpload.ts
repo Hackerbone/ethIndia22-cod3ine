@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import { create, IPFSHTTPClient } from "ipfs-http-client";
+import { getEmployeesInGroup } from "./services";
 const CryptoJS = require("crypto-js");
 
 const ipfsEndpoint = "https://ipfs.infura.io:5001";
@@ -25,71 +26,52 @@ const provider: ethers.providers.Web3Provider =
 
 const signer: ethers.providers.JsonRpcSigner = provider.getSigner();
 
-export const handleFileUploadOld = async (file: File) => {
+export const handleFileUpload = async (file: File, groupName: string) => {
   try {
-    const b64data = await FiletoBase64(file);
-
-    // KEY AND IV GENERATION
-    console.log(b64data);
-    const buffer = CryptoJS.enc.Base64.parse(b64data);
-    const key = CryptoJS.lib.WordArray.random(256 / 8);
-    const iv = CryptoJS.lib.WordArray.random(128 / 8);
-
-    // ENCRYPT AND DECRYPT
-    const encryptedFile = await AESEncryptFile(buffer, key, iv);
-    const decryptedFile = await AESDecryptFile(encryptedFile, key, iv);
-
-    // SANITY CHECK
-    const decryptedFileObject = new File(
-      [decryptedFile.toString()],
-      "decrypted_" + file.name
-    );
-    //get base64 of decryptedFileObject
-    const pre_encryptedFile = new File([buffer.toString()], "pre_" + file.name);
-    console.log(buffer, decryptedFile);
-    console.log(pre_encryptedFile, decryptedFileObject);
-
-    // UPLOAD TO IPFS
-    // const fileAdded = await ipfsClient.add(file);
-    // console.log(fileAdded);
-    return decryptedFileObject;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-export const handleFileUpload = async (file: File) => {
-  try {
-    // encrypt file with AES & get encrypted file
+    // SETTING UP FOR ENCRYPTION OF FILE
     const arrayBuff: any = await FileToArrayBuffer(file);
-    console.log(arrayBuff);
-
     const key = CryptoJS.lib.WordArray.random(256 / 8);
     const iv = CryptoJS.lib.WordArray.random(128 / 8);
+    const keyObj = {
+      key: key.toString(),
+      iv: iv.toString(),
+    };
 
+    //GET DETAILS OF ALL OTHER MEMBERS IN GROUP
+    const employees = await getEmployeesInGroup(groupName);
+    console.log(employees);
+
+    // SETTING UP FOR ENCRYPTION OF KEY OBJ
+    const keyObjString = JSON.stringify(keyObj);
+    const keyObjBuffer = Buffer.from(keyObjString);
+
+    // ENCRYPT EACH EMPLOYEE'S PUBLIC KEY WITH KEY OBJ
+    const encryptedKeyObj = await Promise.all(
+      employees.map(async (employee: any) => {
+        const encryptedKey = await signer.encrypt(
+          employee.publicKey,
+          keyObjBuffer
+        );
+        return {
+          encryptedKey,
+          employeeAddress: employee.employeeAddress,
+        };
+      })
+    );
+
+    //ENCRYPTION
     const encryptedFile = await encrypt(arrayBuff, key, iv);
-    console.log("exc", encryptedFile);
     const encryptedFileObj = new File(
       [encryptedFile],
       "encrypted_" + file.name
     );
 
+    // DECRYPTION
     const textEncryptedFile = await getFileAsTextFromBlob(encryptedFile);
-
-    console.log("textEncryptedFile", textEncryptedFile);
-
-    // console.log(encryptedFileObj);
-
-    // // console.log("resss", reader.result);
     const decryptedFile = await AESDecryptFile(textEncryptedFile, key, iv);
-    console.log("decryptedFile", decryptedFile);
-
     const uintArr = convertWordArrayToUint8Array(decryptedFile);
-
     const decryptedFileObject = new File([uintArr], "decrypted_" + file.name);
-    console.log("decryptedFileObject", decryptedFileObject);
     return decryptedFileObject;
-    // get decrypted file object from above reader function
   } catch (error) {
     console.log(error);
   }

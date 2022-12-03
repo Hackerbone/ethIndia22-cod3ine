@@ -7,7 +7,7 @@ function Dashboard() {
   return (
     <div>
       <Layout route={"Dashboard"}>
-        <AddEmployee />
+        <UploadFile />
       </Layout>
     </div>
   );

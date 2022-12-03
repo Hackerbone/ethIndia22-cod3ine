@@ -51,6 +51,13 @@ function AddEmployee() {
           Add Employee to Organization
         </Button>
       </Form>
+      <Button
+        onClick={async () => {
+          console.log(await getAllEmployees());
+        }}
+      >
+        Get employees
+      </Button>
     </>
   );
 }
