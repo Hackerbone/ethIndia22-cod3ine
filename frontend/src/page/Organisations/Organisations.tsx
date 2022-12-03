@@ -1,14 +1,19 @@
+import { ExclamationCircleFilled } from "@ant-design/icons";
+import { Modal } from "antd";
 import { useState, useEffect } from "react";
 import { FaEthereum } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import TableComponent from "../../components/common/TableComponent";
 import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
 import { getOrganizationDetails } from "../../services/services";
 
+const { confirm } = Modal;
+
 const Organisations = () => {
   const navigate = useNavigate();
+  const [searchParams]: any = useSearchParams();
   const [data, setData] = useState<any>([]);
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const columns = [
     {
@@ -64,6 +69,20 @@ const Organisations = () => {
     };
     getOrganisationDetails();
   }, []);
+
+
+  useEffect(() => {
+    if (searchParams.get('consent') === "true") {
+      confirm({
+        title: "Do you want to share your public key with this organisation?",
+        icon: <ExclamationCircleFilled />,
+        maskClosable: false,
+        content: 'This is required to share files with this organisation',
+        onOk: () => { },
+        cancelText: null
+      })
+    }
+  }, [searchParams]);
 
   return (
     <DashboardLayout title={"Organisations"}>

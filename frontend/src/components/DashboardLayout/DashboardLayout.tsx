@@ -1,6 +1,6 @@
 import Sidebar from "./Sidebar";
 import "./DashboardLayout.css";
-import { Button, Row } from "antd";
+import {  Button, Row } from "antd";
 import { FaEthereum } from "react-icons/fa";
 import { useWeb3AuthContext } from "../../contexts/SocialLoginContext";
 import { Chat } from "@pushprotocol/uiweb";
@@ -60,15 +60,12 @@ const DashboardLayout = ({ children, headerExtra, title }: any) => {
               )}
             </Row>
           </div>
-          {
-            <h1 className="dashboardLayout-title">
-              Organisation{" "}
-              {orgName ? (
-                <span className="color-orange"> - {orgName}</span>
-              ) : null}
-            </h1>
-          }
-          {children}
+            {title ?
+              <h1 className="dashboardLayout-title">
+                {title}
+              </h1> : null
+            }
+            {children}
         </div>
       </div>
       <Chat
