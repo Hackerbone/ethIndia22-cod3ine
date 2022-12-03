@@ -2,6 +2,8 @@ import { Divider, Menu } from 'antd'
 import React from 'react'
 import { BiBuildingHouse } from "react-icons/bi"
 import { NavLink, useLocation } from 'react-router-dom'
+import {MdOutlineGroups} from 'react-icons/md'
+import { UsergroupAddOutlined } from '@ant-design/icons'
 
 const Sidebar = () => {
     const location = useLocation()
@@ -19,13 +21,13 @@ const Sidebar = () => {
     const groupsMenuItems = [
         {
             key: '1',
-            icon: <BiBuildingHouse className="sidebar-nav-icon" />,
+            icon: <MdOutlineGroups className="sidebar-nav-icon" />,
             label: 'Groups',
             path: "/groups"
         },
         {
             key: '2',
-            icon: <BiBuildingHouse className="sidebar-nav-icon" />,
+            icon: <UsergroupAddOutlined className="sidebar-nav-icon" />,
             label: 'Users',
             path: "/organisations/users"
         },

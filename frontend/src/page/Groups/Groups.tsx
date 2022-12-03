@@ -7,10 +7,12 @@ import { FiMoreVertical } from "react-icons/fi"
 import TableComponent from '../../components/common/TableComponent'
 import CreateGroupModal from '../../components/Modals/CreateGroupModal'
 import { Dropdown, Menu } from 'antd'
+import { useNavigate } from 'react-router-dom'
 
 
 
 const Groups = () => {
+    const navigate = useNavigate()
     const [data, setData] = useState([
         {
             groupName: "Dev Group",
@@ -54,7 +56,7 @@ const Groups = () => {
             dataIndex: 'users',
             key: 'users',
             render: (users: any) =>
-                <div>{users} Users</div>
+                <div style={{ cursor: "pointer" }} onClick={() => navigate("/groups/groupname/users")}>{users} Users</div>
 
         },
         {

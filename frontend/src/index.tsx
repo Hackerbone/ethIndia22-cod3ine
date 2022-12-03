@@ -12,6 +12,8 @@ import CreateOrganisation from "./page/Connect/CreateOrganisation";
 import JoinOrganization from "./page/Connect/JoinOrganization";
 import Organisations from "./page/Organisations/Organisations";
 import Groups from "./page/Groups/Groups";
+import Users from "./page/Organisations/Users";
+import GroupUsers from "./page/Groups/GroupUsers";
 
 const element = document.getElementById("root");
 const root = createRoot(element!);
@@ -42,12 +44,16 @@ const router = createBrowserRouter([
     element: <Organisations />,
   },
   {
+    path: "/organisations/users",
+    element: <Users />,
+  },
+  {
     path: "/groups",
     element: <Groups />,
   },
   {
-    path: "/dashboard",
-    element: <Dashboard />,
+    path: "/groups/:groupname/users",
+    element: <GroupUsers />,
   },
 ]);
 
