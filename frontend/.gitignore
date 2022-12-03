@@ -36,3 +36,5 @@ yarn-error.log*
 
 # typescript
 tsconfig.buildinfo
+
+./src/contracts/*
