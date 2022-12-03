@@ -49,14 +49,16 @@ export const handleFileUpload = async (file: File, groupName: string) => {
     const keyObjBuffer = Buffer.from(keyObjString);
 
     // ENCRYPT EACH EMPLOYEE'S PUBLIC KEY WITH KEY OBJ
-    const encryptedKeyObj = await Promise.all(
+    const encryptedKeysObj = await Promise.all(
       employees.map(async (employee: any) => {
+        // get public key of each employee in group
         let account = employee.employeeAddress;
         let keyB64 = await window.ethereum.request({
           method: "eth_getEncryptionPublicKey",
           params: [account],
         });
         let publicKey = Buffer.from(keyB64, "base64");
+        // encrypt keyObj with each employee's public key
         const enc = encrypt({
           publicKey: publicKey.toString("base64"),
           data: ascii85.encode(keyObjBuffer).toString(),
@@ -81,23 +83,59 @@ export const handleFileUpload = async (file: File, groupName: string) => {
       "encrypted_" + file.name
     );
 
-    // DECRYPTION OF FILE
-    const textEncryptedFile = await getFileAsTextFromBlob(encryptedFile);
-    const decryptedFile = await AESDecryptFile(textEncryptedFile, key, iv);
-    const uintArr = convertWordArrayToUint8Array(decryptedFile);
-    const decryptedFileObject = new File([uintArr], "decrypted_" + file.name);
-    return decryptedFileObject;
+    // upload encrypted file to IPFS
+    const encryptedFileAdded = await ipfsClient.add(encryptedFileObj);
+    // upload encrypted keys obj to IPFS
+    const encryptedKeysObjAdded = await ipfsClient.add(encryptedKeysObj);
+
+    // Update the contract with the IPFS hash of the encrypted file and encrypted keys
+    const contract = await signer.getContractAt();
+
+    return { encryptedFileAdded, encryptedKeysObjAdded };
   } catch (error) {
     console.log(error);
   }
 };
 
-const AESEncryptFile = async (buffer: any, secretKey: any, iv: any) => {
-  console.log(buffer, secretKey, iv);
-  var encrypted = CryptoJS.AES.encrypt(buffer, secretKey, {
-    iv: iv,
-  });
-  return encrypted;
+export const handleDownloadData = async (cid: any, keyCid: any) => {
+  try {
+    // FETCH FILE FROM IPFS
+    const file = await ipfsClient.cat(cid);
+    // FETCH KEY FROM IPFS
+    const keyObjEnc = await ipfsClient.cat(keyCid);
+
+    // Reconstructing the original object outputed by encryption
+    const structuredData = {
+      version: "x25519-xsalsa20-poly1305",
+      ephemPublicKey: data.slice(0, 32).toString("base64"),
+      nonce: data.slice(32, 56).toString("base64"),
+      ciphertext: data.slice(56).toString("base64"),
+    };
+    // Convert data to hex string required by MetaMask
+    const ct = `0x${Buffer.from(
+      JSON.stringify(structuredData),
+      "utf8"
+    ).toString("hex")}`;
+    const decrypt = await window.ethereum.request({
+      method: "eth_decrypt",
+      params: [ct, account],
+    });
+    // Decode the base85 to final bytes
+    const keyObj = ascii85.decode(decrypt);
+
+    // DECRYPTION OF FILE
+    const textEncryptedFile = await getFileAsTextFromBlob(file);
+    const decryptedFile = await AESDecryptFile(
+      textEncryptedFile,
+      keyObj.key,
+      keyObj.iv
+    );
+    const uintArr = convertWordArrayToUint8Array(decryptedFile);
+    const decryptedFileObject = new File([uintArr], fileName);
+    return decryptedFileObject;
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 const AESDecryptFile = async (encryptedFile: any, secretKey: any, iv: any) => {
@@ -106,19 +144,6 @@ const AESDecryptFile = async (encryptedFile: any, secretKey: any, iv: any) => {
   });
   return decrypted;
 };
-
-const FiletoBase64 = (file: File) =>
-  new Promise((resolve, reject) => {
-    const reader: any = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-      const base64data = reader?.result
-        ?.replace("data:", "")
-        .replace(/^.+,/, "");
-      resolve(base64data);
-    };
-    reader.onerror = (error: any) => reject(error);
-  });
 
 const FileToArrayBuffer = (file: File) =>
   new Promise((resolve, reject) => {
