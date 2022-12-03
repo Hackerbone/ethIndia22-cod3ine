@@ -108,3 +108,11 @@ table {
   background: #e5e5e51a !important;
   border: 2px solid #e5e5e511 !important;
 }
+
+.wallet-address {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-right: 2rem;
+  display: flex;
+  align-items: center;
+}

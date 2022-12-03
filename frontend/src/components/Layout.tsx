@@ -60,14 +60,8 @@ const settings: MenuItem[] = [
 
 const LayoutComponent: React.FC<{
   children?: React.ReactNode;
-  header?: React.ReactNode;
-}> = ({
-  children,
-  header,
-}: {
-  children?: React.ReactNode;
-  header?: React.ReactNode;
-}) => {
+  route?: String;
+}> = ({ children, route }: { children?: React.ReactNode; route?: String }) => {
   const { address, connect } = useWeb3AuthContext();
 
   return (
@@ -102,10 +96,27 @@ const LayoutComponent: React.FC<{
         >
           <div className="main-header-content">
             <div className="main-header-title">{"xyz"} Organization</div>
-            <div className="main-header-subtitle">Employees</div>
+            <div className="main-header-subtitle">{route}</div>
           </div>
           {address ? (
-            <div>{address.slice(0, 6) + "..." + address.slice(-4)}</div>
+            <div className="wallet-address">
+              Wallet Address: {address.slice(0, 6) + "..." + address.slice(-4)}{" "}
+              (Status{" "}
+              <>
+                <div
+                  style={{
+                    width: "0.5rem",
+                    height: "0.5rem",
+                    borderRadius: "50%",
+                    background: "#10ca00",
+                    display: "inline-block",
+                    marginLeft: "0.5rem",
+                    marginRight: "0.5rem",
+                  }}
+                />
+              </>{" "}
+              )
+            </div>
           ) : (
             <Button
               onClick={connect}
