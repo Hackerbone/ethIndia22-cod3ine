@@ -12,6 +12,11 @@ import Organisations from "./page/Organisations/Organisations";
 import Groups from "./page/Groups/Groups";
 import Users from "./page/Organisations/Users";
 import GroupUsers from "./page/Groups/GroupUsers";
+import Dashboard from "./page/Dashboard/Dashboard";
+import DashboardHome from "./page/Dashboard/DashboardHome";
+import AllFiles from "./page/Dashboard/AllFiles";
+import Trash from "./page/Dashboard/Trash";
+
 
 const App: React.FC = () => {
   const {
@@ -55,6 +60,24 @@ const App: React.FC = () => {
     {
       path: "/groups/:groupname/users",
       element: <GroupUsers />,
+    },
+    {
+      path: "dashboard/:groupname",
+      element: <Dashboard />,
+      children: [
+        {
+          path:"",
+          element: <DashboardHome />
+        },
+        {
+          path:"files",
+          element: <AllFiles />
+        },
+        {
+          path:"trash",
+          element: <Trash />
+        },
+      ]
     },
     {
       path: "*",

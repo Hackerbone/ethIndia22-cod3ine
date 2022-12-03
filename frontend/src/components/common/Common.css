@@ -91,3 +91,90 @@ align-items: center;
     font-size:1.6rem;
     color: #fb8500;
 }
+
+
+.fileComponent-large-contaier {
+    width: 14rem;
+    height: 12rem;
+    background:#e5e5e54d;
+    border:2px solid #e5e5e5;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content:space-between;
+    cursor: pointer;
+    border-radius: 0;
+}
+
+.fileComponent-filetype-large {
+    background:#e5e5e5;
+    width: 5rem;
+    height: 5rem;
+    display: flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.filecl-filetype {
+    font-size: 2rem;
+    color:#e931f7;
+}
+
+.filecl-name {
+    font-weight: 500;
+    margin-bottom:0rem;
+    margin-top: 0;
+}
+
+.filecl-size {
+    font-size:.8rem;
+    margin:0;
+}
+
+.fileComponent-filetype-small {
+    background:#e5e5e5;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.filecs-filetype {
+    font-size: 1.3rem;
+    color:red;
+}
+
+
+.filecs-name {
+    font-weight: 500;
+    margin-bottom:0rem;
+    margin-top: 0;
+    font-size: 1.1rem;
+}
+
+.filecs-size {
+    font-size:.8rem;
+    margin:0;
+    color:#333;
+}
+
+
+.nav-add-files-button {
+    background-color: #fb8500;
+    width: 3rem !important;
+    height:3rem;
+    display: flex;
+    justify-content:center;
+    align-items:center;
+    border-radius:2px;
+    margin-top: 3rem;
+    cursor: pointer;
+    border: none;
+
+}
+
+.the-upload-icon {
+    color: #fff;
+    font-size:1.7rem;
+}
