@@ -48,3 +48,12 @@
   border: 2px solid #fff;
   box-shadow: none;
 }
+
+:where(.css-dev-only-do-not-override-1s3dcof).ant-spin-nested-loading
+  .ant-spin-blur {
+  opacity: 0.9;
+}
+
+.ant-spin-container::after {
+  background: #111 !important;
+}

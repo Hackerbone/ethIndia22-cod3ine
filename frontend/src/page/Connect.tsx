@@ -4,7 +4,7 @@ import { useSmartAccountContext } from "../contexts/SmartAccountContext";
 import JoinOrg from "./Connect/JoinOrg";
 import CreateOrg from "./Connect/CreateOrg";
 import "./Page.css";
-import { Spin } from "antd";
+import SpinLoader from "../components/SpinLoader";
 export default function Connect() {
   const [formType, setFormType] = React.useState<string | null>(null);
 
@@ -52,7 +52,7 @@ export default function Connect() {
   };
 
   return (
-    <Spin spinning={loading || authLoading}>
+    <SpinLoader isLoading={loading || authLoading}>
       <div className="connectPage">
         <div className="left-container">
           Welcome to my SQUAD my Top G. We are SQUAD, making collaboration and
@@ -86,6 +86,6 @@ export default function Connect() {
           )}
         </div>
       </div>
-    </Spin>
+    </SpinLoader>
   );
 }
