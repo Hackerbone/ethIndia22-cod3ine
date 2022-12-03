@@ -29,6 +29,21 @@ export const deployContract = async (orgName: String) => {
   }
 };
 
+export const getOrganizationDetails = async () => {
+  try {
+    const contractInstance = new ethers.Contract(
+      localStorage.getItem("contractAddress") || "",
+      contract.abi,
+      provider
+    );
+    // call getOrgDetails function
+    const orgDetails = await contractInstance.getOrgDetails();
+    return orgDetails;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const joinOrganisation = async (orgAddress: string) => {
   try {
     const contractInstance = new ethers.Contract(
@@ -39,7 +54,7 @@ export const joinOrganisation = async (orgAddress: string) => {
     const userAddress = await signer.getAddress();
     const tx = await contractInstance.isEmployee(userAddress);
     if (tx === true) {
-      localStorage.setItem("organisationAddress", orgAddress);
+      localStorage.setItem("contractAddress", orgAddress);
     } else {
       alert("You are not an employee of this organisation");
     }
@@ -90,7 +105,7 @@ export const createGroup = async (groupName: string) => {
 // function to add employee to group
 export const addEmployeeToGroup = async (
   groupName: string,
-  employeeAddress: string,
+  employeeAddress: string
 ) => {
   try {
     const contractInstance = new ethers.Contract(
@@ -107,7 +122,7 @@ export const addEmployeeToGroup = async (
   } catch (error) {
     console.log(error);
   }
-}
+};
 
 // function to get all employees
 export const getAllEmployees = async () => {
@@ -122,9 +137,9 @@ export const getAllEmployees = async () => {
   } catch (error) {
     console.log(error);
   }
-}
+};
 
-// function to get all employees in a group 
+// function to get all employees in a group
 export const getEmployeesInGroup = async (groupName: string) => {
   try {
     const contractInstance = new ethers.Contract(
@@ -137,4 +152,19 @@ export const getEmployeesInGroup = async (groupName: string) => {
   } catch (error) {
     console.log(error);
   }
-}
+};
+
+// function to get all groups
+export const getAllGroups = async () => {
+  try {
+    const contractInstance = new ethers.Contract(
+      localStorage.getItem("contractAddress") || "",
+      contract.abi,
+      signer
+    );
+    const tx = await contractInstance.getGroups();
+    return tx;
+  } catch (error) {
+    console.log(error);
+  }
+};

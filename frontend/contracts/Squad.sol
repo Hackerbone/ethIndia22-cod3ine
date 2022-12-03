@@ -29,6 +29,17 @@ contract Squad {
         orgName = _orgName;
     }
 
+    function getOrgDetails () public view returns (string memory, address, Employee[] memory) {
+        Employee[] memory employees = new Employee[](employeeAddrs.length);
+        for (uint i = 0; i < employeeAddrs.length; i++) {
+            employees[i] = Employee(
+                employeeNames[employeeAddrs[i]],
+                employeeAddrs[i]
+            );
+        }
+        return (orgName, admin, employees);
+    }
+
     // function to add employees to the organization
     function addEmployee(
         address _employeeAddress,
