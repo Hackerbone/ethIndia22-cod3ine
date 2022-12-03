@@ -184,8 +184,13 @@ contract Squad {
         revert("Group does not exist");
     }
 
-    function getGroups() public view returns (Group[] storage) {
-        return groups;
+    // function to get all group names
+    function getGroupNames() public view returns (string[] memory) {
+        string[] memory groupNames = new string[](groups.length);
+        for (uint256 i = 0; i < groups.length; i++) {
+            groupNames[i] = groups[i].name;
+        }
+        return groupNames;
     }
 
     // get all employees with their names as employee array
