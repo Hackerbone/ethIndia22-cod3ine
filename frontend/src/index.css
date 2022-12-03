@@ -95,11 +95,6 @@ table {
   background: #e5e5e51a !important;
 }
 
-/* give color to cell in antd table */
-.ant-table-row {
-  background: #e5e5e51a !important;
-  border: 2px solid #e5e5e51d !important;
-}
 
 .ant-table-row > td {
   background: #e5e5e51a !important;

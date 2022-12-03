@@ -42,7 +42,7 @@ const CreateOrganisation = () => {
               let res = await deployContract(values.orgName);
               console.log("deployed", res);
               setLoad(false)
-              navigate("/dashboard");
+              navigate("/organisations");
             } catch (e) {
               navigate("/connect");
               message.error("Something went wrong");
