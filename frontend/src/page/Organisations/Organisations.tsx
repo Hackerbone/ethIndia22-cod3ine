@@ -33,10 +33,10 @@ const Organisations = () => {
       ),
     },
     {
-      title: "Groups",
-      dataIndex: "groups",
-      key: "groups",
-      render: (groups: any) => <div>{groups} Groups</div>,
+      title: "Employees",
+      dataIndex: "employees",
+      key: "employees",
+      render: (employees: any) => <div>{employees} Employees</div>,
     },
     {
       title: "Role",

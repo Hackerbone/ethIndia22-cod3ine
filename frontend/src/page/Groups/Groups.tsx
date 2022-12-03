@@ -103,9 +103,11 @@ const Groups = () => {
   };
 
   useEffect(() => {
-    (async() => {
+    const interval = setInterval(async() => {
       await getGroups();
-    })()
+    },2000)
+
+    return () => clearInterval(interval)
   }, []);
 
   const [showModal, setShowModal] = useState(false);
@@ -125,7 +127,7 @@ const Groups = () => {
         }
       />
       <TableComponent columns={columns} dataSource={data} />
-      <CreateGroupModal show={showModal} setShow={setShowModal} getGroups={getGroups} />
+      <CreateGroupModal show={showModal} setShow={setShowModal} />
       <AddUserGroupModal
         show={showAdduserModal}
         setShow={setShowAddUserModal}

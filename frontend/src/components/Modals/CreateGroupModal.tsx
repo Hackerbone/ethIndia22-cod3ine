@@ -4,7 +4,7 @@ import ModalComponent from "../common/ModalComponent";
 import SquadButton from "../common/SquadButton";
 import { createGroup } from "../../services/services";
 
-const CreateGroupModal = ({ show, setShow,getGroups }: any) => {
+const CreateGroupModal = ({ show, setShow }: any) => {
   const [loading,setLoading] = useState(false)
 
   return (
@@ -16,12 +16,11 @@ const CreateGroupModal = ({ show, setShow,getGroups }: any) => {
           console.log(value.groupName);
           const res = await createGroup(value.groupName);
           console.log("groupName added", res);
-          await getGroups()
           setLoading(false)
           setShow(false)
         }}
       >
-        <Form.Item label="group name" name="groupName">
+        <Form.Item  name="groupName">
           <Input
             placeholder="Group Name"
             className="search-bar-common"
