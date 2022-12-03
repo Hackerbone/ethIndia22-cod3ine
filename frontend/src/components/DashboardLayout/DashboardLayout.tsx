@@ -3,7 +3,7 @@ import "./DashboardLayout.css";
 import { Button, Row } from "antd";
 import { FaEthereum } from "react-icons/fa";
 import { useWeb3AuthContext } from "../../contexts/SocialLoginContext";
-
+import { Chat } from "@pushprotocol/uiweb";
 const DashboardLayout = ({ children, headerExtra, title }: any) => {
   const { address, connect, disconnect } = useWeb3AuthContext();
 
@@ -62,12 +62,21 @@ const DashboardLayout = ({ children, headerExtra, title }: any) => {
           </div>
           {
             <h1 className="dashboardLayout-title">
-              Organisation {orgName ? <span className="color-orange"> - {orgName}</span> : null}
+              Organisation{" "}
+              {orgName ? (
+                <span className="color-orange"> - {orgName}</span>
+              ) : null}
             </h1>
           }
           {children}
         </div>
       </div>
+      <Chat
+        account={address} //user address
+        supportAddress="0x3d6e6678E43ecd302867EE0c92bcBF2Fd6C60239" //support address
+        apiKey="jVPMCRom1B.iDRMswdehJG7NpHDiECIHwYMMv6k2KzkPJscFIDyW8TtSnk4blYnGa8DIkfuacU0"
+        env="staging"
+      />
     </>
   );
 };
