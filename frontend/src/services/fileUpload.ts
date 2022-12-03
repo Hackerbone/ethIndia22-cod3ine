@@ -32,7 +32,7 @@ const signer: ethers.providers.JsonRpcSigner = provider.getSigner();
 
 export const handleFileUpload = async (file: File, groupName: string) => {
   try {
-    console.log(groupName)
+    console.log(groupName);
     // SETTING UP FOR ENCRYPTION OF FILE
     const arrayBuff: any = await FileToArrayBuffer(file);
     const key = CryptoJS.lib.WordArray.random(256 / 8);
@@ -58,6 +58,11 @@ export const handleFileUpload = async (file: File, groupName: string) => {
       "encrypted_" + file.name
     );
 
+    const accts = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
+    console.log(accts);
+
     // ENCRYPT EACH EMPLOYEE'S KEY OBJ with PUBLIC KEY
     const encryptedKeysObj = await Promise.all(
       // Ei
@@ -69,7 +74,7 @@ export const handleFileUpload = async (file: File, groupName: string) => {
           method: "eth_getEncryptionPublicKey",
           params: [account],
         });
-        console.log("asdasd", keyB64)
+        console.log("asdasd", keyB64);
         let publicKey = Buffer.from(keyB64, "base64"); // PuKi
         // encrypt keyObj with each employee's public key
         const enc = encrypt({
@@ -82,6 +87,7 @@ export const handleFileUpload = async (file: File, groupName: string) => {
           Buffer.from(enc.nonce, "base64"),
           Buffer.from(enc.ciphertext, "base64"),
         ]);
+        console.log(buf);
         return {
           buf,
           employeeAddress: employee.addr, // [{encrypted key, wallet address}]
@@ -89,10 +95,22 @@ export const handleFileUpload = async (file: File, groupName: string) => {
       })
     );
 
+    /// TEST ////
+    const walletAddress = await signer.getAddress();
+    const data = encryptedKeysObj[0].buf;
+    console.log(walletAddress, data);
+    const res = await decryptData(walletAddress, data);
+    console.log("res", res);
+    /// TEST ////
+
     // upload encrypted file to IPFS
     const encryptedFileAdded = await ipfsClient.add(encryptedFileObj); // upload E1
+    console.log("encryptedFileAdded", encryptedFileAdded);
     // upload encrypted keys obj to IPFS
-    const encryptedKeysObjAdded = await ipfsClient.add(encryptedKeysObj); // upload Ei
+    const encryptedKeysObjAdded = await ipfsClient.add(
+      JSON.stringify(encryptedKeysObj)
+    ); // upload Ei
+    console.log("encryptedKeysObjAdded", encryptedKeysObjAdded);
 
     // Update the contract with the IPFS hash of the encrypted file and encrypted keys
     const contractInstance = new ethers.Contract(
@@ -103,8 +121,8 @@ export const handleFileUpload = async (file: File, groupName: string) => {
     const tx = await contractInstance.addFileToGroup(
       groupName,
       file.name,
-      encryptedFileAdded.cid,
-      encryptedKeysObjAdded.cid
+      encryptedFileAdded.path,
+      encryptedKeysObjAdded.path
     );
     return tx;
   } catch (error) {
@@ -112,54 +130,72 @@ export const handleFileUpload = async (file: File, groupName: string) => {
   }
 };
 
+async function decryptData(account: string, data: Buffer): Promise<Buffer> {
+  // Reconstructing the original object outputed by encryption
+  const structuredData = {
+    version: "x25519-xsalsa20-poly1305",
+    ephemPublicKey: data.slice(0, 32).toString("base64"),
+    nonce: data.slice(32, 56).toString("base64"),
+    ciphertext: data.slice(56).toString("base64"),
+  };
+  // Convert data to hex string required by MetaMask
+  const ct = `0x${Buffer.from(JSON.stringify(structuredData), "utf8").toString(
+    "hex"
+  )}`;
+  // Send request to MetaMask to decrypt the ciphertext
+  // Once again application must have acces to the account
+  const decrypt = await window.ethereum.request({
+    method: "eth_decrypt",
+    params: [ct, account],
+  });
+  // Decode the base85 to final bytes
+  return ascii85.decode(decrypt);
+}
+
 export const handleDownloadData = async (
-  cid: any,
-  keyCid: any,
+  path: any,
+  keyPath: any,
   filename: any
 ) => {
   try {
-    // FETCH E1, encrypted FILE FROM IPFS
-    const encFile = await ipfsClient.cat(cid);
-    // FETCH KEYs FROM IPFS
-    const encKeysArray: any = await ipfsClient.cat(keyCid); // [{encrypted key, wallet address}]
+    // get encrypted file from IPFS
+    let enc_file_data = await ipfsClient.cat(path);
+    let enc_data: any = [];
+    for await (const chunk of enc_file_data) enc_data.push(chunk);
+    enc_data = Buffer.concat(enc_data);
+    let enc_key_data = await ipfsClient.cat(keyPath);
+    let enc_key: any = [];
+    for await (const chunk of enc_key_data) enc_key.push(chunk);
+    enc_key = Buffer.concat(enc_key);
+    console.log(enc_key, enc_data);
+
+    // convert enc_key to JSON
+    const enc_key_json = JSON.parse(enc_key.toString());
+    console.log(enc_key_json);
 
     // find matching encrypted key for current user
     const walletAddress = await signer.getAddress();
-    const ourEncKey = encKeysArray.find(
+    const ourEncKey = enc_key_json.find(
       (keyObj: any) => keyObj.employeeAddress === walletAddress
     );
+    console.log("ENC KEY:", ourEncKey.buf.data);
 
     // DECRYPT KEY OBJ
-    // Reconstructing the original object outputed by encryption
-    const data = ourEncKey.buf;
-    const structuredData = {
-      version: "x25519-xsalsa20-poly1305",
-      ephemPublicKey: data.slice(0, 32).toString("base64"),
-      nonce: data.slice(32, 56).toString("base64"),
-      ciphertext: data.slice(56).toString("base64"),
-    };
-    // Convert data to hex string required by MetaMask
-    const ct = `0x${Buffer.from(
-      JSON.stringify(structuredData),
-      "utf8"
-    ).toString("hex")}`;
-    const decrypt = await window.ethereum.request({
-      method: "eth_decrypt",
-      params: [ct, walletAddress],
-    });
-    // Decode the base85 to final bytes
-    const keyObj = ascii85.decode(decrypt);
+    const res = await decryptData(walletAddress, ourEncKey.buf.data);
+    console.log(res);
 
     // DECRYPTION OF FILE
-    const textEncryptedFile = await getFileAsTextFromBlob(encFile);
-    const decryptedFile = await AESDecryptFile(
-      textEncryptedFile,
-      keyObj.key,
-      keyObj.iv
-    );
-    const uintArr = convertWordArrayToUint8Array(decryptedFile);
-    const decryptedFileObject = new File([uintArr], filename);
-    return decryptedFileObject;
+    // const blob = new Blob([enc_data], { type: "application/octet-stream" });
+    // const textEncryptedFile = await getFileAsTextFromBlob(blob);
+    // const decryptedFile = await AESDecryptFile(
+    //   textEncryptedFile,
+    //   keyObj.key,
+    //   keyObj.iv
+    // );
+    // const uintArr = convertWordArrayToUint8Array(decryptedFile);
+    // const decryptedFileObject = new File([uintArr], filename);
+    // console.log(decryptedFileObject);
+    // return decryptedFileObject;
   } catch (err) {
     console.log(err);
   }

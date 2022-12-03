@@ -1,31 +1,36 @@
 import { Button, Dropdown, Menu, Row } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineFileText } from "react-icons/ai";
 import { FiMoreVertical } from "react-icons/fi";
+import { useParams } from "react-router-dom";
 import FileComponentLarge from "../../components/common/FileComponentLarge";
 import SearchBar from "../../components/common/SearchBar";
 import TableComponent from "../../components/common/TableComponent";
 import UploadFileModal from "../../components/Modals/UploadFileModal";
+import { handleDownloadData } from "../../services/fileUpload";
+import { getFilesByGroup } from "../../services/services";
 
 const DashboardHome = () => {
+  const params = useParams();
+  const { groupname } = params;
   const [show, setShow] = useState(false);
 
   const [data, setData] = useState([
-    {
-      file: "VAPT Report",
-      date: "18th Oct 2022",
-      by: "Aditya",
-    },
-    {
-      file: "VAPT Report",
-      date: "18th Oct 2022",
-      by: "Aditya",
-    },
-    {
-      file: "VAPT Report",
-      date: "18th Oct 2022",
-      by: "Aditya",
-    },
+    // {
+    //   file: "VAPT Report",
+    //   date: "18th Oct 2022",
+    //   by: "Aditya",
+    // },
+    // {
+    //   file: "VAPT Report",
+    //   date: "18th Oct 2022",
+    //   by: "Aditya",
+    // },
+    // {
+    //   file: "VAPT Report",
+    //   date: "18th Oct 2022",
+    //   by: "Aditya",
+    // },
   ]);
 
   const menu = (
@@ -35,6 +40,13 @@ const DashboardHome = () => {
           key: "1",
           danger: true,
           label: "Delete File",
+        },
+        {
+          key: "2",
+          label: "Download File",
+          onClick: (v) => {
+            console.log(v, "Download");
+          },
         },
       ]}
     />
@@ -51,7 +63,7 @@ const DashboardHome = () => {
             <AiOutlineFileText className="filecs-filetype" />
           </div>
           <div>
-            <div className="filecs-name">VAPT Report</div>
+            <div className="filecs-name">{file}</div>
             <div className="filecs-size">200KB</div>
           </div>
         </div>
@@ -70,10 +82,10 @@ const DashboardHome = () => {
       render: (by: any) => <div style={{ cursor: "pointer" }}>{by}</div>,
     },
     {
-      title: "",
-      dataIndex: "actions",
-      key: "actions",
-      render: (actions: any) => (
+      title: "Download",
+      dataIndex: "download",
+      key: "download",
+      render: (text: any, record: any) => (
         <div
           style={{
             display: "flex",
@@ -82,13 +94,41 @@ const DashboardHome = () => {
             paddingRight: "2rem",
           }}
         >
-          <Dropdown overlay={menu}>
-            <FiMoreVertical style={{ fontSize: "1.4rem" }} />
-          </Dropdown>
+          <Button
+            onClick={async () => {
+              console.log(record, "Download");
+              await handleDownloadData(
+                record.encfilehash,
+                record.enckeyshash,
+                record.file
+              );
+            }}
+          >
+            Download
+          </Button>
         </div>
       ),
     },
   ];
+
+  const getFiles = async () => {
+    const res = await getFilesByGroup(groupname || "");
+    console.log(res);
+    const fdata = res.map((file: any) => {
+      return {
+        file: file.name,
+        date: Date.now(),
+        by: "Aditya",
+        encfilehash: file.encfilehash,
+        enckeyshash: file.enckeyshash,
+      };
+    });
+    setData(fdata);
+  };
+
+  useEffect(() => {
+    getFiles();
+  }, []);
 
   return (
     <div className="dashboard-main-container">

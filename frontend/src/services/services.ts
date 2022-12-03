@@ -162,8 +162,22 @@ export const getAllGroups = async () => {
       contract.abi,
       signer
     );
-    console.log(typeof (contractInstance.getGroupNames));
+    console.log(typeof contractInstance.getGroupNames);
     const tx = await contractInstance.getGroupNames();
+    return tx;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getFilesByGroup = async (groupName: string) => {
+  try {
+    const contractInstance = new ethers.Contract(
+      localStorage.getItem("contractAddress") || "",
+      contract.abi,
+      signer
+    );
+    const tx = await contractInstance.getFilesByGroup(groupName);
     return tx;
   } catch (error) {
     console.log(error);
