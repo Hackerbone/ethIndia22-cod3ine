@@ -1,6 +1,8 @@
 import { ethers } from "ethers";
 import contract from "../contracts/Squad.json";
 import * as PushAPI from "@pushprotocol/restapi";
+import { ConsoleSqlOutlined } from "@ant-design/icons";
+const CryptoJS = require("crypto-js");
 
 declare global {
   interface Window {
@@ -252,11 +254,10 @@ export const setPublicKey = async () => {
     });
     // convert base64 public key to bytes32
     let buf = Buffer.from(publicKeyb64, "base64");
-    //convert buf to bytes32 compatbile
-    let publicKey = ethers.utils.hexlify(buf);
-    let publicKeyF = ethers.utils.formatBytes32String(publicKey);
-    console.log(publicKeyF);
-    const tx = await contractInstance.setPublicKey(publicKeyF);
+    let data: string = "0x" + buf.toString("hex");
+    // pack to 32 bytes string
+    console.log(data);
+    const tx = await contractInstance.setPublicKey(data);
     return tx;
   } catch (error) {
     console.log(error);
