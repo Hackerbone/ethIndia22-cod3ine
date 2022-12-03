@@ -78,6 +78,8 @@ export const Web3AuthProvider = ({ children }: any) => {
         });
       });
     }
+
+    // re save socialLoginSDK if not in state
   }, [address, socialLoginSDK, web3State]);
 
   const connect = useCallback(async () => {
@@ -148,23 +150,25 @@ export const Web3AuthProvider = ({ children }: any) => {
   }, [address, connect, socialLoginSDK]);
 
   const disconnect = useCallback(async () => {
-    if (!socialLoginSDK || !socialLoginSDK.web3auth) {
-      console.error("Web3Modal not initialized.");
-      return;
+    if (socialLoginSDK) {
+      await socialLoginSDK.logout();
+      (window as any).getSocialLoginSDK = null;
+
+      socialLoginSDK.hideWallet();
     }
-    await socialLoginSDK.logout();
-    setWeb3State({
-      provider: null,
-      web3Provider: null,
-      ethersProvider: null,
-      address: "",
-      chainId: activeChainId,
-    });
+
+    // remove metamask provider from browser
+    if (window.ethereum) {
+      window.ethereum.removeAllListeners();
+      console.log("kardia");
+    }
+
+    if (web3State) {
+      setWeb3State(initialState);
+    }
     setUserInfo(null);
-    (window as any).getSocialLoginSDK = null;
-    socialLoginSDK.hideWallet();
     setSocialLoginSDK(null);
-  }, [socialLoginSDK]);
+  }, [socialLoginSDK, web3State]);
 
   return (
     <Web3AuthContext.Provider

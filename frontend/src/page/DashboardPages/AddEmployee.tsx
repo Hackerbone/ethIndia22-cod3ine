@@ -1,6 +1,12 @@
 import React from "react";
 
-import { Button, Form, Input, Upload } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  //  Upload
+} from "antd";
+import { addEmployee } from "../../services/services";
 // import { useNavigate } from "react-router-dom";
 
 function AddEmployee() {
@@ -8,8 +14,11 @@ function AddEmployee() {
     <Form
       onFinish={async (values) => {
         console.log(values);
-        // let res = await deployContract(values.orgName);
-        // console.log(res);
+        let res = await addEmployee(
+          values.employeeAddress,
+          values.employeeName
+        );
+        console.log(res);
         // navigate("/dashboard");
       }}
     >
@@ -21,11 +30,11 @@ function AddEmployee() {
         <Input placeholder="employeename" />
       </Form.Item>
 
-      <Form.Item name="file">
+      {/* <Form.Item name="file">
         <Upload>
           <Button>Upload File</Button>
         </Upload>
-      </Form.Item>
+      </Form.Item> */}
 
       <Button htmlType="submit">Submit</Button>
     </Form>

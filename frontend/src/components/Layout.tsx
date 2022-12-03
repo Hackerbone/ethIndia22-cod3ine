@@ -62,7 +62,7 @@ const LayoutComponent: React.FC<{
   children?: React.ReactNode;
   route?: String;
 }> = ({ children, route }: { children?: React.ReactNode; route?: String }) => {
-  const { address, connect } = useWeb3AuthContext();
+  const { address, connect, disconnect } = useWeb3AuthContext();
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -92,7 +92,6 @@ const LayoutComponent: React.FC<{
         <Header
           style={{ padding: 0, background: "transparent" }}
           className="main-header"
-          hasSider
         >
           <div className="main-header-content">
             <Col
@@ -107,23 +106,28 @@ const LayoutComponent: React.FC<{
             </Col>
           </div>
           {address ? (
-            <div className="wallet-address">
-              Wallet Address: {address.slice(0, 6) + "..." + address.slice(-4)}{" "}
-              (Status{" "}
-              <>
-                <div
-                  style={{
-                    width: "0.5rem",
-                    height: "0.5rem",
-                    borderRadius: "50%",
-                    background: "#10ca00",
-                    display: "inline-block",
-                    marginLeft: "0.5rem",
-                    marginRight: "0.5rem",
-                  }}
-                />
-              </>{" "}
-              )
+            <div className="actions">
+              <div className="wallet-address">
+                Wallet Address:{" "}
+                {address.slice(0, 6) + "..." + address.slice(-4)} (Status{" "}
+                <>
+                  <div
+                    style={{
+                      width: "0.5rem",
+                      height: "0.5rem",
+                      borderRadius: "50%",
+                      background: "#10ca00",
+                      display: "inline-block",
+                      marginLeft: "0.5rem",
+                      marginRight: "0.5rem",
+                    }}
+                  />
+                </>{" "}
+                )
+              </div>
+              <Button className="danger" onClick={disconnect}>
+                Disconnect Wallet
+              </Button>
             </div>
           ) : (
             <Button
