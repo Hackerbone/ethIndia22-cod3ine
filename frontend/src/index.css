@@ -33,3 +33,23 @@ p {
   color: #fff;
   margin: 0;
 }
+
+.ant-menu-item-selected {
+  color: #fb8500 !important;
+}
+
+.ant-menu-item {
+  background: none !important;
+  margin: 2rem 0 !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ant-menu-item:not(:first-child):hover {
+  color: #fb8500 !important;
+}
+
+.ant-menu-item:first-child:hover {
+  color: #fff !important;
+}
