@@ -25,7 +25,7 @@ const provider: ethers.providers.Web3Provider =
 
 const signer: ethers.providers.JsonRpcSigner = provider.getSigner();
 
-export const handleFileUpload = async (file: File) => {
+export const handleFileUploadOld = async (file: File) => {
   try {
     const b64data = await FiletoBase64(file);
 
@@ -44,8 +44,8 @@ export const handleFileUpload = async (file: File) => {
       [decryptedFile.toString()],
       "decrypted_" + file.name
     );
-    const pre_encryptedFile = new File([buffer.toString()], "pre_" + file.name);
     //get base64 of decryptedFileObject
+    const pre_encryptedFile = new File([buffer.toString()], "pre_" + file.name);
     console.log(buffer, decryptedFile);
     console.log(pre_encryptedFile, decryptedFileObject);
 
@@ -53,6 +53,43 @@ export const handleFileUpload = async (file: File) => {
     // const fileAdded = await ipfsClient.add(file);
     // console.log(fileAdded);
     return decryptedFileObject;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const handleFileUpload = async (file: File) => {
+  try {
+    // encrypt file with AES & get encrypted file
+    const arrayBuff: any = await FileToArrayBuffer(file);
+    console.log(arrayBuff);
+
+    const key = CryptoJS.lib.WordArray.random(256 / 8);
+    const iv = CryptoJS.lib.WordArray.random(128 / 8);
+
+    const encryptedFile = await encrypt(arrayBuff, key, iv);
+    console.log("exc", encryptedFile);
+    const encryptedFileObj = new File(
+      [encryptedFile],
+      "encrypted_" + file.name
+    );
+
+    const textEncryptedFile = await getFileAsTextFromBlob(encryptedFile);
+
+    console.log("textEncryptedFile", textEncryptedFile);
+
+    // console.log(encryptedFileObj);
+
+    // // console.log("resss", reader.result);
+    const decryptedFile = await AESDecryptFile(textEncryptedFile, key, iv);
+    console.log("decryptedFile", decryptedFile);
+
+    const uintArr = convertWordArrayToUint8Array(decryptedFile);
+
+    const decryptedFileObject = new File([uintArr], "decrypted_" + file.name);
+    console.log("decryptedFileObject", decryptedFileObject);
+    return decryptedFileObject;
+    // get decrypted file object from above reader function
   } catch (error) {
     console.log(error);
   }
@@ -85,3 +122,58 @@ const FiletoBase64 = (file: File) =>
     };
     reader.onerror = (error: any) => reject(error);
   });
+
+const FileToArrayBuffer = (file: File) =>
+  new Promise((resolve, reject) => {
+    const reader: any = new FileReader();
+    reader.readAsArrayBuffer(file);
+    reader.onloadend = () => {
+      const arrayBuffer = reader?.result;
+      resolve(arrayBuffer);
+    };
+    reader.onerror = (error: any) => reject(error);
+  });
+
+async function encrypt(file: ArrayBuffer, key: any, iv: any) {
+  var wordArray = CryptoJS.lib.WordArray.create(file); // Convert: ArrayBuffer -> WordArray
+
+  const encrypted = CryptoJS.AES.encrypt(wordArray, key, {
+    iv,
+  });
+
+  console.log("encrypted", encrypted);
+
+  var fileEnc = new Blob([encrypted]); // Create blob from string
+
+  return fileEnc;
+}
+
+function convertWordArrayToUint8Array(wordArray: any) {
+  var arrayOfWords = wordArray.hasOwnProperty("words") ? wordArray.words : [];
+  var length = wordArray.hasOwnProperty("sigBytes")
+    ? wordArray.sigBytes
+    : arrayOfWords.length * 4;
+  var uInt8Array = new Uint8Array(length),
+    index = 0,
+    word,
+    i;
+  for (i = 0; i < length; i++) {
+    word = arrayOfWords[i];
+    uInt8Array[index++] = word >> 24;
+    uInt8Array[index++] = (word >> 16) & 0xff;
+    uInt8Array[index++] = (word >> 8) & 0xff;
+    uInt8Array[index++] = word & 0xff;
+  }
+  return uInt8Array;
+}
+
+function getFileAsTextFromBlob(blob: any) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      resolve(e.target?.result);
+    };
+    reader.onerror = reject;
+    reader.readAsText(blob);
+  });
+}
