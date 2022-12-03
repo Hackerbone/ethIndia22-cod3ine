@@ -53,3 +53,28 @@ p {
 .ant-menu-item:first-child:hover {
   color: #fff !important;
 }
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  height: 6rem !important;
+  align-items: center;
+}
+
+.main-header-content {
+  display: flex;
+  align-items: baseline;
+}
+
+.main-header-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #fb8500;
+  margin-left: 2rem;
+}
+
+.main-header-subtitle {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-left: 1rem;
+}

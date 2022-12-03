@@ -1,4 +1,4 @@
-import React, { Children, useState } from "react";
+import React from "react";
 import {
   DesktopOutlined,
   FileOutlined,
@@ -7,8 +7,9 @@ import {
   PlusOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import type { MenuProps } from "antd";
+import { Button, MenuProps } from "antd";
 import { Layout, Menu } from "antd";
+import { useWeb3AuthContext } from "../contexts/SocialLoginContext";
 
 const { Header, Content, Sider } = Layout;
 
@@ -59,7 +60,16 @@ const settings: MenuItem[] = [
 
 const LayoutComponent: React.FC<{
   children?: React.ReactNode;
-}> = ({ children }: { children?: React.ReactNode }) => {
+  header?: React.ReactNode;
+}> = ({
+  children,
+  header,
+}: {
+  children?: React.ReactNode;
+  header?: React.ReactNode;
+}) => {
+  const { address, connect } = useWeb3AuthContext();
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider collapsed={true} style={{ background: "#0D0D0D" }}>
@@ -85,7 +95,27 @@ const LayoutComponent: React.FC<{
         />
       </Sider>
       <Layout className="site-layout">
-        <Header style={{ padding: 0, background: "transparent" }} />
+        <Header
+          style={{ padding: 0, background: "transparent" }}
+          className="main-header"
+          hasSider
+        >
+          <div className="main-header-content">
+            <div className="main-header-title">{"xyz"} Organization</div>
+            <div className="main-header-subtitle">Employees</div>
+          </div>
+          {address ? (
+            <div>{address.slice(0, 6) + "..." + address.slice(-4)}</div>
+          ) : (
+            <Button
+              onClick={connect}
+              type="primary"
+              style={{ float: "right", marginRight: "2rem" }}
+            >
+              {"Connect Wallet"}
+            </Button>
+          )}
+        </Header>
         <Content style={{ margin: "0 16px" }}>
           <div
             className="site-layout-background"

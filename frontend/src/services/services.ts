@@ -38,7 +38,7 @@ export const joinOrganisation = async (orgAddress: string) => {
     );
     const userAddress = await signer.getAddress();
     const tx = await contractInstance.isEmployee(userAddress);
-    if (tx == true) {
+    if (tx === true) {
       localStorage.setItem("organisationAddress", orgAddress);
     } else {
       alert("You are not an employee of this organisation");
