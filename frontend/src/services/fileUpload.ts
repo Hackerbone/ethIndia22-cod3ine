@@ -1,6 +1,9 @@
 import { ethers } from "ethers";
 import { create, IPFSHTTPClient } from "ipfs-http-client";
 import { getEmployeesInGroup } from "./services";
+import { encrypt } from "@metamask/eth-sig-util";
+const ascii85 = require("ascii85");
+
 const CryptoJS = require("crypto-js");
 
 const ipfsEndpoint = "https://ipfs.infura.io:5001";
@@ -48,25 +51,37 @@ export const handleFileUpload = async (file: File, groupName: string) => {
     // ENCRYPT EACH EMPLOYEE'S PUBLIC KEY WITH KEY OBJ
     const encryptedKeyObj = await Promise.all(
       employees.map(async (employee: any) => {
-        const encryptedKey = await signer.encrypt(
-          employee.publicKey,
-          keyObjBuffer
-        );
+        let account = employee.employeeAddress;
+        let keyB64 = await window.ethereum.request({
+          method: "eth_getEncryptionPublicKey",
+          params: [account],
+        });
+        let publicKey = Buffer.from(keyB64, "base64");
+        const enc = encrypt({
+          publicKey: publicKey.toString("base64"),
+          data: ascii85.encode(keyObjBuffer).toString(),
+          version: "x25519-xsalsa20-poly1305",
+        });
+        const buf = Buffer.concat([
+          Buffer.from(enc.ephemPublicKey, "base64"),
+          Buffer.from(enc.nonce, "base64"),
+          Buffer.from(enc.ciphertext, "base64"),
+        ]);
         return {
-          encryptedKey,
+          buf,
           employeeAddress: employee.employeeAddress,
         };
       })
     );
 
-    //ENCRYPTION
-    const encryptedFile = await encrypt(arrayBuff, key, iv);
+    //ENCRYPTION OF FILE
+    const encryptedFile = await encryptFile(arrayBuff, key, iv);
     const encryptedFileObj = new File(
       [encryptedFile],
       "encrypted_" + file.name
     );
 
-    // DECRYPTION
+    // DECRYPTION OF FILE
     const textEncryptedFile = await getFileAsTextFromBlob(encryptedFile);
     const decryptedFile = await AESDecryptFile(textEncryptedFile, key, iv);
     const uintArr = convertWordArrayToUint8Array(decryptedFile);
@@ -116,7 +131,7 @@ const FileToArrayBuffer = (file: File) =>
     reader.onerror = (error: any) => reject(error);
   });
 
-async function encrypt(file: ArrayBuffer, key: any, iv: any) {
+async function encryptFile(file: ArrayBuffer, key: any, iv: any) {
   var wordArray = CryptoJS.lib.WordArray.create(file); // Convert: ArrayBuffer -> WordArray
 
   const encrypted = CryptoJS.AES.encrypt(wordArray, key, {
