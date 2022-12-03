@@ -1,15 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-// PUSH Comm Contract Interface
-interface IPUSHCommInterface {
-    function sendNotification(
-        address _channel,
-        address _recipient,
-        bytes calldata _identity
-    ) external;
-}
-
 contract Squad {
     address admin;
     string orgName;
@@ -67,25 +58,6 @@ contract Squad {
     function addEmployee(address _employeeAddress, string memory _employeeName)
         public
     {
-        IPUSHCommInterface(0xb3971BCef2D791bc4027BbfedFb47319A4AAaaAa)
-            .sendNotification(
-                0x3d6e6678E43ecd302867EE0c92bcBF2Fd6C60239, // from channel - recommended to set channel via dApp and put it's value -> then once contract is deployed, go back and add the contract address as delegate for your channel
-                _employeeAddress, // to recipient, put address(this) in case you want Broadcast or Subset. For Targetted put the address to which you want to send
-                bytes(
-                    string(
-                        // We are passing identity here: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/identity/payload-identity-implementations
-                        abi.encodePacked(
-                            "0", // this is notification identity: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/identity/payload-identity-implementations
-                            "+", // segregator
-                            "3", // this is payload type: https://docs.epns.io/developers/developer-guides/sending-notifications/advanced/notification-payload-types/payload (1, 3 or 4) = (Broadcast, targetted or subset)
-                            "+", // segregator
-                            "Title", // this is notificaiton title
-                            "+", // segregator
-                            "Body" // notification body
-                        )
-                    )
-                )
-            );
         require(msg.sender == admin, "Only admin can add employees");
         require(
             bytes(_employeeName).length > 0,
@@ -212,8 +184,13 @@ contract Squad {
         revert("Group does not exist");
     }
 
-    function getGroups() private view returns (Group[] storage) {
-        return groups;
+    // function to get all group names
+    function getGroupNames() public view returns (string[] memory) {
+        string[] memory groupNames = new string[](groups.length);
+        for (uint256 i = 0; i < groups.length; i++) {
+            groupNames[i] = groups[i].name;
+        }
+        return groupNames;
     }
 
     // get all employees with their names as employee array

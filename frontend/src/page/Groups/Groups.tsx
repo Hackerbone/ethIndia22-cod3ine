@@ -1,4 +1,4 @@
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, UserAddOutlined } from "@ant-design/icons";
 import React, { useState, useEffect } from "react";
 import SearchBar from "../../components/common/SearchBar";
 import SquadButton from "../../components/common/SquadButton";
@@ -6,9 +6,10 @@ import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
 import { FiMoreVertical } from "react-icons/fi";
 import TableComponent from "../../components/common/TableComponent";
 import CreateGroupModal from "../../components/Modals/CreateGroupModal";
-import { Dropdown, Menu } from "antd";
+import { Button, Dropdown, Menu } from "antd";
 import { useNavigate } from "react-router-dom";
 import { getAllGroups } from "../../services/services";
+import AddUserGroupModal from "../../components/Modals/AddUserGroupModal";
 
 const Groups = () => {
   const navigate = useNavigate();
@@ -53,10 +54,13 @@ const Groups = () => {
       title: "Users",
       dataIndex: "users",
       key: "users",
-      render: (users: any) => (
+      render: (users: any, record: any) => (
         <div
           style={{ cursor: "pointer" }}
-          onClick={() => navigate("/groups/groupname/users")}
+          onClick={() =>
+            navigate(`/groups/${record.groupName}/users
+          `)
+          }
         >
           {users} Users
         </div>
@@ -82,23 +86,26 @@ const Groups = () => {
       ),
     },
   ];
+  const getGroups = async () => {
+    const res = await getAllGroups();
+    console.log("Organisation details", res);
+    // change according to details from creater gro
+    setData([
+      {
+        groupName: res[0][0],
+        files: 4,
+        users: 3,
+      },
+    ]);
+  };
+
   useEffect(() => {
-    const getGroups = async () => {
-      const res = await getAllGroups();
-      console.log("Organisation details", res);
-      // change according to details from creater gro
-      setData([
-        {
-          groupName: res[0][0],
-          files: 4,
-          users: 3,
-        },
-      ]);
-    };
     getGroups();
   }, []);
 
   const [showModal, setShowModal] = useState(false);
+  const [showAdduserModal, setShowAddUserModal] = useState(false);
+
   return (
     <DashboardLayout title={"Manage Groups"}>
       <SearchBar
@@ -114,6 +121,10 @@ const Groups = () => {
       />
       <TableComponent columns={columns} dataSource={data} />
       <CreateGroupModal show={showModal} setShow={setShowModal} />
+      <AddUserGroupModal
+        show={showAdduserModal}
+        setShow={setShowAddUserModal}
+      />
     </DashboardLayout>
   );
 };
