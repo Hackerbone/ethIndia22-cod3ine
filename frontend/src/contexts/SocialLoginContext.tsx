@@ -3,32 +3,7 @@ import { ethers } from "ethers";
 import SocialLogin, { getSocialLoginSDK } from "@biconomy/web3-auth";
 import { activeChainId } from "../utils/chainConfig";
 
-interface web3AuthContextType {
-  connect: () => Promise<SocialLogin | null | undefined>;
-  disconnect: () => Promise<void>;
-  getUserInfo: () => Promise<any>;
-  provider: any;
-  ethersProvider: ethers.providers.Web3Provider | null;
-  web3Provider: ethers.providers.Web3Provider | null;
-  loading: boolean;
-  chainId: number;
-  address: string;
-  userInfo: any;
-}
-export const Web3AuthContext = React.createContext<web3AuthContextType>({
-  connect: () => Promise.resolve(null),
-  disconnect: () => Promise.resolve(),
-  getUserInfo: () => Promise.resolve(),
-  loading: false,
-  provider: null,
-  ethersProvider: null,
-  web3Provider: null,
-  chainId: activeChainId,
-  address: "",
-  userInfo: null,
-});
-export const useWeb3AuthContext = () => useContext(Web3AuthContext);
-
+// Types
 export enum SignTypeMethod {
   PERSONAL_SIGN = "PERSONAL_SIGN",
   EIP712_SIGN = "EIP712_SIGN",
@@ -41,6 +16,20 @@ type StateType = {
   address?: string;
   chainId?: number;
 };
+interface web3AuthContextType {
+  connect: () => Promise<SocialLogin | null | undefined>;
+  disconnect: () => Promise<void>;
+  getUserInfo: () => Promise<any>;
+  provider: any;
+  ethersProvider: ethers.providers.Web3Provider | null;
+  web3Provider: ethers.providers.Web3Provider | null;
+  loading: boolean;
+  chainId: number;
+  address: string;
+  userInfo: any;
+}
+
+// Initial State
 const initialState: StateType = {
   provider: null,
   web3Provider: null,
@@ -49,14 +38,34 @@ const initialState: StateType = {
   chainId: activeChainId,
 };
 
+// Create Context
+export const Web3AuthContext = React.createContext<web3AuthContextType>({
+  connect: () => Promise.resolve(null),
+  disconnect: () => Promise.resolve(),
+  getUserInfo: () => Promise.resolve(),
+  loading: false,
+  provider: null,
+  ethersProvider: null,
+  web3Provider: null,
+  chainId: activeChainId,
+  address: "",
+  userInfo: null,
+});
+
+export const useWeb3AuthContext = () => useContext(Web3AuthContext);
+
 export const Web3AuthProvider = ({ children }: any) => {
   const [web3State, setWeb3State] = useState<StateType>(initialState);
+
   const { provider, web3Provider, ethersProvider, address, chainId } =
     web3State;
+
   const [loading, setLoading] = useState(false);
+
   const [socialLoginSDK, setSocialLoginSDK] = useState<SocialLogin | null>(
     null
   );
+
   const [userInfo, setUserInfo] = useState<any>(null);
 
   // if wallet already connected close widget
@@ -64,35 +73,21 @@ export const Web3AuthProvider = ({ children }: any) => {
     if (socialLoginSDK && socialLoginSDK.provider) {
       socialLoginSDK.hideWallet();
     }
-
-    // check if user is already logged in via metamask in window.ethereum
-    // if (window.ethereum) {
-    //   const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
-    //   const signer = web3Provider.getSigner();
-    //   signer.getAddress().then((address: string) => {
-    //     setWeb3State({
-    //       ...web3State,
-    //       web3Provider,
-    //       ethersProvider: web3Provider,
-    //       address,
-    //     });
-    //   });
-    // }
-
-    // re save socialLoginSDK if not in state
-  }, [address, socialLoginSDK, web3State]);
+  }, [socialLoginSDK]);
 
   const connect = useCallback(async () => {
-    if (address) return;
+    if (address) return; // if already connected return
+
     if (socialLoginSDK?.provider) {
       setLoading(true);
-      console.info("socialLoginSDK.provider", socialLoginSDK.provider);
       const web3Provider = new ethers.providers.Web3Provider(
         socialLoginSDK.provider
       );
+
       const signer = web3Provider.getSigner();
       const gotAccount = await signer.getAddress();
       const network = await web3Provider.getNetwork();
+
       setWeb3State({
         provider: socialLoginSDK.provider,
         web3Provider: web3Provider,
@@ -100,19 +95,28 @@ export const Web3AuthProvider = ({ children }: any) => {
         address: gotAccount,
         chainId: Number(network.chainId),
       });
+
       setLoading(false);
       return;
     }
+
     if (socialLoginSDK) {
       socialLoginSDK.showWallet();
-      return socialLoginSDK;
+      return;
     }
+
     setLoading(true);
+
     const sdk = await getSocialLoginSDK(ethers.utils.hexValue(80001));
+
     sdk.showConnectModal();
+
     sdk.showWallet();
+
     setSocialLoginSDK(sdk);
+
     setLoading(false);
+
     return socialLoginSDK;
   }, [address, socialLoginSDK]);
 

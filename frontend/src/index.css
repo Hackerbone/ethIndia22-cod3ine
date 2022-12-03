@@ -95,7 +95,6 @@ table {
   background: #e5e5e51a !important;
 }
 
-
 .ant-table-row > td {
   background: #e5e5e51a !important;
   border: 2px solid #e5e5e511 !important;
@@ -133,4 +132,15 @@ table {
   font-size: 1.8rem;
   font-weight: 500;
   margin: 1rem 0;
+}
+
+.btn {
+  /* background-color: // primary blue; */
+  background-color: #0082fb;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
 }
