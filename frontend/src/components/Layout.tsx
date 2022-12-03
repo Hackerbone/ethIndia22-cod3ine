@@ -64,6 +64,8 @@ const LayoutComponent: React.FC<{
 }> = ({ children, route }: { children?: React.ReactNode; route?: String }) => {
   const { address, connect, disconnect } = useWeb3AuthContext();
 
+  const orgName = localStorage.getItem("orgName");
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider collapsed={true} style={{ background: "#0D0D0D" }}>
@@ -101,7 +103,7 @@ const LayoutComponent: React.FC<{
                 marginTop: "5rem",
               }}
             >
-              <div className="main-header-title">{"xyz"} Organization</div>
+              <div className="main-header-title">{orgName} Organization</div>
               <div className="main-header-subtitle">{route}</div>
             </Col>
           </div>

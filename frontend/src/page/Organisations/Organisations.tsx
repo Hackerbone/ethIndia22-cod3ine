@@ -51,21 +51,24 @@ const Organisations = () => {
       key: "role",
     },
   ];
+  const getOrganisationDetails = async () => {
+    const res = await getOrganizationDetails();
+    console.log("Organisation details", res);
+    setData([
+      {
+        key: "1",
+        orgName: res[0],
+        address: res[1],
+        employees: res[2].length,
+        role: "Owner",
+      },
+    ]);
+
+    localStorage.setItem("orgName", res[0]);
+    localStorage.setItem("contractAddress", res[1]);
+  };
   // use effect call getOrganisationDetails
   useEffect(() => {
-    const getOrganisationDetails = async () => {
-      const res = await getOrganizationDetails();
-      console.log("Organisation details", res);
-      setData([
-        {
-          key: "1",
-          orgName: res[0],
-          address: res[1],
-          employees: res[2].length,
-          role: "Owner",
-        },
-      ]);
-    };
     getOrganisationDetails();
   }, []);
 

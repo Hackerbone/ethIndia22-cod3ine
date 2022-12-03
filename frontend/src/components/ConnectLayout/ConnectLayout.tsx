@@ -1,19 +1,6 @@
 import { Image } from "antd";
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { useWeb3AuthContext } from "../../contexts/SocialLoginContext";
 
 const ConnectLayout = ({ children, image, title, subtitle }: any) => {
-  const navigate = useNavigate();
-
-  const { address, loading } = useWeb3AuthContext();
-
-  const isAuthenticated = address && !loading;
-
-  if (isAuthenticated) {
-    navigate("/organization");
-  }
-
   return (
     <div className="connectLayout-connectLayoutContainer">
       <div className="connectLayout-left">

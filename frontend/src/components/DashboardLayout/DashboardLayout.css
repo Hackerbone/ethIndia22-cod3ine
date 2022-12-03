@@ -103,3 +103,7 @@
 .active-nav-item {
   text-decoration: none !important;
 }
+
+.color-orange {
+  color: #fb8500;
+}

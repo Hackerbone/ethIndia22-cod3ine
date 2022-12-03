@@ -8,6 +8,8 @@ import { useWeb3AuthContext } from "../../contexts/SocialLoginContext";
 const DashboardLayout = ({ children, headerExtra, title }: any) => {
   const { address, connect, disconnect } = useWeb3AuthContext();
 
+  const orgName = localStorage.getItem("orgName");
+
   return (
     <>
       <Sidebar />
@@ -59,7 +61,11 @@ const DashboardLayout = ({ children, headerExtra, title }: any) => {
               )}
             </Row>
           </div>
-          {title ? <h1 className="dashboardLayout-title">{title}</h1> : null}
+          {
+            <h1 className="dashboardLayout-title">
+              Organisation - <span className="color-orange">{orgName}</span>
+            </h1>
+          }
           {children}
         </div>
       </div>
