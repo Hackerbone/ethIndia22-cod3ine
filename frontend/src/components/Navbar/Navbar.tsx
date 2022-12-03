@@ -6,7 +6,7 @@ const Navbar = () => {
     const navigate = useNavigate()
     return (
         <Row className="navbar-navbarContainer" align="middle" justify="space-between">
-            <div className="navbar-logoContainer">
+            <div className="navbar-logo">
                 SQUAD
             </div>
 
