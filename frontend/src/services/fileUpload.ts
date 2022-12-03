@@ -89,7 +89,7 @@ export const handleFileUpload = async (file: File, groupName: string) => {
     const encryptedKeysObjAdded = await ipfsClient.add(encryptedKeysObj);
 
     // Update the contract with the IPFS hash of the encrypted file and encrypted keys
-    const contract = await signer.getContractAt();
+    // const contract = await signer.getContractAt();
 
     return { encryptedFileAdded, encryptedKeysObjAdded };
   } catch (error) {
@@ -97,46 +97,46 @@ export const handleFileUpload = async (file: File, groupName: string) => {
   }
 };
 
-export const handleDownloadData = async (cid: any, keyCid: any) => {
-  try {
-    // FETCH FILE FROM IPFS
-    const file = await ipfsClient.cat(cid);
-    // FETCH KEY FROM IPFS
-    const keyObjEnc = await ipfsClient.cat(keyCid);
+// export const handleDownloadData = async (cid: any, keyCid: any) => {
+//   try {
+//     // FETCH FILE FROM IPFS
+//     const file = await ipfsClient.cat(cid);
+//     // FETCH KEY FROM IPFS
+//     const keyObjEnc = await ipfsClient.cat(keyCid);
 
-    // Reconstructing the original object outputed by encryption
-    const structuredData = {
-      version: "x25519-xsalsa20-poly1305",
-      ephemPublicKey: data.slice(0, 32).toString("base64"),
-      nonce: data.slice(32, 56).toString("base64"),
-      ciphertext: data.slice(56).toString("base64"),
-    };
-    // Convert data to hex string required by MetaMask
-    const ct = `0x${Buffer.from(
-      JSON.stringify(structuredData),
-      "utf8"
-    ).toString("hex")}`;
-    const decrypt = await window.ethereum.request({
-      method: "eth_decrypt",
-      params: [ct, account],
-    });
-    // Decode the base85 to final bytes
-    const keyObj = ascii85.decode(decrypt);
+//     // Reconstructing the original object outputed by encryption
+//     const structuredData = {
+//       version: "x25519-xsalsa20-poly1305",
+//       ephemPublicKey: data.slice(0, 32).toString("base64"),
+//       nonce: data.slice(32, 56).toString("base64"),
+//       ciphertext: data.slice(56).toString("base64"),
+//     };
+//     // Convert data to hex string required by MetaMask
+//     const ct = `0x${Buffer.from(
+//       JSON.stringify(structuredData),
+//       "utf8"
+//     ).toString("hex")}`;
+//     const decrypt = await window.ethereum.request({
+//       method: "eth_decrypt",
+//       params: [ct, account],
+//     });
+//     // Decode the base85 to final bytes
+//     const keyObj = ascii85.decode(decrypt);
 
-    // DECRYPTION OF FILE
-    const textEncryptedFile = await getFileAsTextFromBlob(file);
-    const decryptedFile = await AESDecryptFile(
-      textEncryptedFile,
-      keyObj.key,
-      keyObj.iv
-    );
-    const uintArr = convertWordArrayToUint8Array(decryptedFile);
-    const decryptedFileObject = new File([uintArr], fileName);
-    return decryptedFileObject;
-  } catch (err) {
-    console.log(err);
-  }
-};
+//     // DECRYPTION OF FILE
+//     const textEncryptedFile = await getFileAsTextFromBlob(file);
+//     const decryptedFile = await AESDecryptFile(
+//       textEncryptedFile,
+//       keyObj.key,
+//       keyObj.iv
+//     );
+//     const uintArr = convertWordArrayToUint8Array(decryptedFile);
+//     const decryptedFileObject = new File([uintArr], fileName);
+//     return decryptedFileObject;
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
 
 const AESDecryptFile = async (encryptedFile: any, secretKey: any, iv: any) => {
   var decrypted = CryptoJS.AES.decrypt(encryptedFile, secretKey, {

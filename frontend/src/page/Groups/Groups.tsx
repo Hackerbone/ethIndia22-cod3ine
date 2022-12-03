@@ -53,10 +53,13 @@ const Groups = () => {
       title: "Users",
       dataIndex: "users",
       key: "users",
-      render: (users: any) => (
+      render: (users: any, record: any) => (
         <div
           style={{ cursor: "pointer" }}
-          onClick={() => navigate("/groups/groupname/users")}
+          onClick={() =>
+            navigate(`/groups/${record.groupName}/users
+          `)
+          }
         >
           {users} Users
         </div>
