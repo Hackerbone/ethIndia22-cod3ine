@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, Form, Input } from "antd";
 import { useNavigate } from "react-router-dom";
+import { deployContract } from "../../services/services";
 
 function CreateOrg({ provider }: { provider: any }) {
   const navigate = useNavigate();
@@ -9,6 +10,7 @@ function CreateOrg({ provider }: { provider: any }) {
     <Form
       onFinish={(values) => {
         console.log(values);
+        deployContract();
         navigate("/dashboard");
       }}
     >
