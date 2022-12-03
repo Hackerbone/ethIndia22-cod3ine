@@ -42,7 +42,7 @@ const CreateOrganisation = () => {
               console.log("deployed", res);
               setLoad(false);
               if (res) {
-                navigate("/organisations");
+                navigate("/organisations?consent=true");
               }
             } catch (e) {
               navigate("/connect");

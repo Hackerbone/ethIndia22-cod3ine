@@ -170,13 +170,30 @@ export const handleDownloadData = async (
     console.log(resJson);
 
     // DECRYPTION OF FILE
-    const blob = new Blob([enc_data], { type: "application/octet-stream" });
-    const textEncryptedFile = await getFileAsTextFromBlob(blob);
-    const decryptedFile = await AESDecryptFile(
-      textEncryptedFile,
-      resJson.key,
-      resJson.iv
-    );
+
+    // const encFileBlobData = new Blob([enc_data]);
+
+    const encFileBlob = new Blob([enc_data], {
+      type: "application/octet-stream",
+    });
+
+    const textFromBlob = await getFileAsTextFromBlob(encFileBlob);
+
+    console.log(textFromBlob);
+
+    console.log("resJson", resJson);
+
+    // resJson.key is a string, need to convert to WordArray
+    const key = CryptoJS.enc.Hex.parse(resJson.key);
+    const iv = CryptoJS.enc.Hex.parse(resJson.iv);
+
+    console.log("key", key);
+    console.log("iv", iv);
+
+    const decryptedFile = await AESDecryptFile(textFromBlob, key, iv);
+
+    console.log("deC", decryptedFile);
+
     const uintArr = convertWordArrayToUint8Array(decryptedFile);
     const decryptedFileObject = new File([uintArr], filename);
     console.log(decryptedFileObject);
@@ -228,7 +245,7 @@ const FileToArrayBuffer = (file: File) =>
 
 async function encryptFile(file: ArrayBuffer, key: any, iv: any) {
   var wordArray = CryptoJS.lib.WordArray.create(file); // Convert: ArrayBuffer -> WordArray
-
+  console.log({ key, iv });
   const encrypted = CryptoJS.AES.encrypt(wordArray, key, {
     iv,
   });
