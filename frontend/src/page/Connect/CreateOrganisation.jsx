@@ -1,6 +1,6 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { Form, Input, message, Row } from "antd";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageLoader from "../../components/common/PageLoader";
 import SquadButton from "../../components/common/SquadButton";
@@ -11,6 +11,7 @@ import { deployContract } from "../../services/services";
 
 const CreateOrganisation = () => {
   const navigate = useNavigate();
+  const [load, setLoad] = useState(false);
 
   const { address, loading: authLoading } = useWeb3AuthContext();
 
@@ -35,9 +36,17 @@ const CreateOrganisation = () => {
       <Row style={{ display: "flex", flexDirection: "column" }}>
         <Form
           onFinish={async (values) => {
-            let res = await deployContract(values.orgName);
-            console.log(res);
-            navigate("/dashboard");
+            try {
+
+              setLoad(true)
+              let res = await deployContract(values.orgName);
+              console.log("deployed", res);
+              setLoad(false)
+              navigate("/dashboard");
+            } catch (e) {
+              navigate("/connect");
+              message.error("Something went wrong");
+            }
           }}
         >
           <Form.Item name="orgName">
@@ -50,6 +59,7 @@ const CreateOrganisation = () => {
             style={{ padding: "0rem 3rem", width: "fit-content" }}
             icon={<PlusOutlined />}
             htmlType="submit"
+            loading={load}
           >
             Create a New Organization
           </SquadButton>

@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import contract from "../contracts/contracts/Squad.json";
+import contract from "../contracts/Squad.json";
 import { create, IPFSHTTPClient } from "ipfs-http-client";
 const CryptoJS = require("crypto-js");
 

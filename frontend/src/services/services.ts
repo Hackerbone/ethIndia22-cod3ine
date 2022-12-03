@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import contract from "../contracts/contracts/Squad.json";
+import contract from "../contracts/Squad.json";
 
 declare global {
   interface Window {
@@ -24,8 +24,9 @@ export const deployContract = async (orgName: String) => {
     await contractRes.deployed();
     localStorage.setItem("contractAddress", contractRes.address);
     return contractRes;
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
+    throw new Error(error);
   }
 };
 
