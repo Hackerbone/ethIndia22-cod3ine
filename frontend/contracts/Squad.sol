@@ -23,20 +23,15 @@ contract Squad {
     }
 
     struct Group {
-        string name; // group name
-        address[] members; // group members
-        File[] files; // group files
-    }
-
-    Group[] public groups; // array of all public groups
-    mapping(string => Group) public groupMap; // group name to group mapping
-
-    struct File {
         string name;
-        string encfilehash;
-        string enckeyshash;
+        address[] members;
+        address[] files;
     }
-    
+
+    Group[] public groups;
+    mapping(string => Group) public groupMap;
+    mapping(address => string) public fileNames;
+
     constructor(string memory _orgName) {
         require(bytes(_orgName).length > 0, "Organization name is required");
         admin = payable(msg.sender);
@@ -99,10 +94,18 @@ contract Squad {
         employeeNames[_employeeAddress] = _employeeName;
     }
 
-    // function to create a group
+    // function to create a group, only admins can make groups
     function createGroup(string memory _groupName) public {
         require(msg.sender == admin, "Only admin can create groups");
         require(bytes(_groupName).length > 0, "Group name cannot be empty");
+        for (uint256 i = 0; i < groups.length; i++) {
+            if (keccak256(bytes(groups[i].name)) == keccak256(bytes(_groupName)))
+                revert("Group already exists");
+        }
+        // make via memory
+        Group storage newGroup = groups.push();
+        newGroup.name = _groupName;
+        newGroup.fileCount = 0;
 
         require(
             groupMap[_groupName].members.length == 0,
@@ -111,108 +114,64 @@ contract Squad {
         Group memory newGroup = Group(
             _groupName,
             new address[](0),
-            new File[](0)
+            new address[](0)
         );
         groups.push(newGroup);
         groupMap[_groupName] = newGroup;
     }
 
     // add an employee to a group by groupName
-    function addEmployeeToGroup(
-        string memory _groupName,
-        address _employeeAddress
-    ) public {
+    function addEmployeeToGroup(string memory _groupName, address _employee)
+        public
+    {
         require(msg.sender == admin, "Only admin can add employees to groups");
-        bool employeeExists = false;
-        for (uint256 i = 0; i < employeeAddrs.length; i++) {
-            if (employeeAddrs[i] == _employeeAddress) {
-                employeeExists = true;
-                break;
-            }
-        }
-        require(employeeExists, "Employee does not exist");
         require(
-            bytes(groupMap[_groupName].name).length > 0,
-            "Group does not exist"
-        );
-        // check if employee is already in the group
-        Group storage group = groupMap[_groupName];
-        for (uint256 i = 0; i < group.members.length; i++) {
-            if (group.members[i] == _employeeAddress) {
-                revert("Employee already exists in the group");
-            }
-        }
-        groupMap[_groupName].members.push(_employeeAddress);
-    }
-
-    // delete employee from a group
-    function deleteEmployeeFromGroup(
-        string memory _groupName,
-        address _employeeAddress
-    ) public {
-        require(
-            msg.sender == admin,
-            "Only admin can delete employees from groups"
-        );
-        require(
-            bytes(groupMap[_groupName].name).length > 0,
-            "Group does not exist"
-        );
-        require(
-            bytes(employeeNames[_employeeAddress]).length > 0,
+            bytes(employeeNames[_employee]).length > 0,
             "Employee does not exist"
         );
-        Group storage group = groupMap[_groupName];
-        for (uint256 i = 0; i < group.members.length; i++) {
-            if (group.members[i] == _employeeAddress) {
-                group.members[i] = group.members[group.members.length - 1];
-                group.members.pop();
-                break;
+        for (uint256 i = 0; i < groups.length; i++) {
+            if (keccak256(bytes(groups[i].name)) == keccak256(bytes(_groupName))) {
+                for (uint256 j = 0; j < groups[i].members.length; j++) {
+                    if (groups[i].members[j] == _employee)
+                        revert("Employee already exists in group");
+                }
+                groups[i].members.push(_employee);
+                return;
             }
         }
+        revert("Group does not exist");
+    }
+
+    // delete employee from a group by groupName
+    function deleteEmployeeFromGroup(string memory _groupName, address _employee)
+        public
+    {
+        require(msg.sender == admin, "Only admin can delete employees");
+        require(
+            bytes(employeeNames[_employee]).length > 0,
+            "Employee does not exist"
+        );
+        for (uint256 i = 0; i < groups.length; i++) {
+            if (keccak256(bytes(groups[i].name)) == keccak256(bytes(_groupName))) {
+                for (uint256 j = 0; j < groups[i].members.length; j++) {
+                    if (groups[i].members[j] == _employee) {
+                        groups[i].members[j] = groups[i].members[
+                            groups[i].members.length - 1
+                        ];
+                        groups[i].members.pop();
+                        return;
+                    }
+                }
+                revert("Employee does not exist in group");
+            }
+        }
+        revert("Group does not exist");
     }
 
     // add file to group, only allowed by admin or other members in group
     function addFileToGroup(
         string memory _groupName,
-        string memory _fileName,
-        string memory _encfilehash,
-        string memory _enckeyshash
-    ) public {
-        Group storage group = groupMap[_groupName];
-        bool memberExists = false;
-        for (uint256 i = 0; i < group.members.length; i++) {
-            if (group.members[i] == msg.sender) {
-                memberExists = true;
-                break;
-            }
-        }
-        // check for file has and key hash being there
-        require(
-            bytes(_encfilehash).length > 0,
-            "Encrypted file hash is required"
-        );
-        require(
-            bytes(_enckeyshash).length > 0,
-            "Encrypted keys hash is required"
-        );
-        require(bytes(_fileName).length > 0, "File name cannot be empty");
-        require(
-            bytes(groupMap[_groupName].name).length > 0,
-            "Group does not exist"
-        );
-        require(
-            memberExists || msg.sender == admin,
-            "Only admin or members of group can add files to group"
-        );
-        group.files.push(
-            File(_fileName, _encfilehash, _enckeyshash)
-        );
-    }
-
-    // delete file from group, only allowed by admin or other members in group
-    function deleteFileFromGroup(
-        string memory _groupName,
+        address _fileAddress,
         string memory _fileName
     ) public {
         Group storage group = groupMap[_groupName];
@@ -223,6 +182,8 @@ contract Squad {
                 break;
             }
         }
+        // check for null address
+        require(_fileAddress != address(0), "File address is required");
         require(bytes(_fileName).length > 0, "File name cannot be empty");
         require(
             bytes(groupMap[_groupName].name).length > 0,
@@ -230,33 +191,64 @@ contract Squad {
         );
         require(
             memberExists || msg.sender == admin,
+            "Only admin or members of group can add files to group"
+        );
+        group.files.push(_fileAddress);
+        fileNames[_fileAddress] = _fileName;
+    }
+
+    // delete file from group, only allowed by admin or other members in group
+    function deleteFileFromGroup(string memory _groupName, address _fileAddress)
+        public
+    {
+        require(_fileAddress != address(0), "File address is required");
+        require(
+            bytes(groupMap[_groupName].name).length > 0,
+            "Group does not exist"
+        );
+
+        Group storage group = groupMap[_groupName];
+        bool memberExists = false;
+        for (uint256 i = 0; i < group.members.length; i++) {
+            if (group.members[i] == msg.sender) {
+                memberExists = true;
+                break;
+            }
+        }
+        require(
+            memberExists || msg.sender == admin,
             "Only admin or members of group can delete files from group"
         );
+
         for (uint256 i = 0; i < group.files.length; i++) {
-            if (keccak256(bytes(group.files[i].name)) ==
-                keccak256(bytes(_fileName))) {
+            if (group.files[i] == _fileAddress) {
                 group.files[i] = group.files[group.files.length - 1];
                 group.files.pop();
                 break;
             }
         }
+        revert("Group does not exist");
     }
 
-    // get all files by group name in array of File structure
-    function getFilesByGroup(string memory _groupName)
+    // get all files with their filenames in a group
+    function getFilesInGroup(string memory _groupName)
         public
         view
-        returns (File[] memory)
+        returns (address[] memory, string[] memory)
     {
         require(
             bytes(groupMap[_groupName].name).length > 0,
             "Group does not exist"
         );
-        return groupMap[_groupName].files;
+        Group storage group = groupMap[_groupName];
+        string[] memory fileNamesInGroup = new string[](group.files.length);
+        for (uint256 i = 0; i < group.files.length; i++) {
+            fileNamesInGroup[i] = fileNames[group.files[i]];
+        }
+        return (group.files, fileNamesInGroup);
     }
 
-    // get all groups
-    function getGroups() public view returns (Group[] memory) {
+    function getGroups() private view returns (Group[] storage) {
         return groups;
     }
 
@@ -273,25 +265,26 @@ contract Squad {
     }
 
     // get all employees in a group with their name as one object
-    function getEmployeesInGroup(string memory _groupName)
+    function getEmployeesByGroup(string memory _groupName)
         public
         view
         returns (Employee[] memory)
     {
-        // check if group exists
-        require(
-            bytes(groupMap[_groupName].name).length > 0,
-            "Group does not exist"
-        );
-        Group storage group = groupMap[_groupName];
-        Employee[] memory employees = new Employee[](group.members.length);
-        for (uint256 i = 0; i < group.members.length; i++) {
-            employees[i] = Employee(
-                employeeNames[group.members[i]],
-                group.members[i]
-            );
+        for (uint256 i = 0; i < groups.length; i++) {
+            if (keccak256(bytes(groups[i].name)) == keccak256(bytes(_groupName))) {
+                Employee[] memory employees = new Employee[](
+                    groups[i].members.length
+                );
+                for (uint256 j = 0; j < groups[i].members.length; j++) {
+                    employees[j] = Employee(
+                        employeeNames[groups[i].members[j]],
+                        groups[i].members[j]
+                    );
+                }
+                return employees;
+            }
         }
-        return employees;
+        revert("Group does not exist");
     }
 
     // function to check if user in employee list

@@ -3,13 +3,12 @@ import { Dropdown, Menu } from "antd";
 import React, { useState, useEffect } from "react";
 import { FaEthereum } from "react-icons/fa";
 import { FiMoreVertical } from "react-icons/fi";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import SearchBar from "../../components/common/SearchBar";
 import SquadButton from "../../components/common/SquadButton";
 import TableComponent from "../../components/common/TableComponent";
 import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
 import InviteUsersModal from "../../components/Modals/InviteUsersModal";
-import { getEmployeesInGroup } from "../../services/services";
 
 const GroupUsers = () => {
   const params = useParams();
