@@ -71,6 +71,7 @@ export const addEmployee = async (
   employeeName: string
 ) => {
   try {
+    console.log("contract address", localStorage.getItem("contractAddress"));
     const contractInstance = new ethers.Contract(
       localStorage.getItem("contractAddress") || "",
       contract.abi,
@@ -80,7 +81,6 @@ export const addEmployee = async (
       employeeAddress,
       employeeName
     );
-    await tx.wait();
     return tx;
   } catch (error) {
     console.log(error);
