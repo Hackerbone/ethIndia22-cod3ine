@@ -6,6 +6,7 @@ import { Web3ContextProvider } from "ethers-react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Connect from "./page/Connect";
 import Dashboard from "./page/Dashboard";
+import Groups from "./page/Groups";
 
 import "./index.css";
 
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: <Dashboard />,
+  },
+  {
+    path: "/groups",
+    element: <Groups />,
   },
 ]);
 
