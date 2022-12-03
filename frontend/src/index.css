@@ -113,3 +113,14 @@ table {
   display: flex;
   align-items: center;
 }
+
+.actions {
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+}
+
+.danger {
+  background-color: #ff0000;
+  color: #fff;
+}
