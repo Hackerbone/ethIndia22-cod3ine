@@ -30,8 +30,8 @@
   background-color: #fb8500;
   color: #fff;
   border: none;
-  border-radius: 5px;
-  padding: 1rem 2rem;
+  border-radius: 4px;
+  padding: 0.8rem 1rem;
   font-size: 1rem;
   width: 16rem;
   margin: 1rem 0;
@@ -42,4 +42,9 @@
 .btn-black {
   background-color: #111;
   color: #fff;
+}
+
+.border-white {
+  border: 2px solid #fff;
+  box-shadow: none;
 }
