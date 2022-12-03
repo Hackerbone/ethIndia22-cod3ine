@@ -1,12 +1,15 @@
-import { Divider, Menu } from "antd";
-import React from "react";
+import { Button, Divider, Tooltip } from "antd";
 import { BiBuildingHouse } from "react-icons/bi";
 import { NavLink, useLocation } from "react-router-dom";
 import { MdOutlineGroups } from "react-icons/md";
-import { UsergroupAddOutlined } from "@ant-design/icons";
+import { DeleteOutlined, PlusOutlined, UsergroupAddOutlined } from "@ant-design/icons";
+import { ImFilesEmpty, ImHome } from "react-icons/im"
+import UploadFileModal from "../Modals/UploadFileModal";
+import { useState } from "react";
 
 const Sidebar = () => {
   const location = useLocation();
+  const [uploadModal,setUploadModal] = useState(false);
 
   const organisationMenuItems = [
     {
@@ -31,6 +34,28 @@ const Sidebar = () => {
       path: "/organisations/users",
     },
   ];
+
+  const dashboardMenuItems = [
+    {
+      key: '1',
+      icon: <ImHome className="sidebar-nav-icon" />,
+      label: 'Home',
+      path: "/dashboard/groupname"
+    },
+    {
+      key: '2',
+      icon: <ImFilesEmpty className="sidebar-nav-icon" />,
+      label: 'Files',
+      path: "/dashboard/groupname/files"
+    },
+    {
+      key: '3',
+      icon: <DeleteOutlined className="sidebar-nav-icon" />,
+      label: 'Trash',
+      path: "/dashboard/groupname/trash"
+    },
+
+  ]
 
   return (
     <div className="sidebar-sidebarContainer">
@@ -59,7 +84,7 @@ const Sidebar = () => {
         ) : null}
 
         {location.pathname === "/organisations/users" ||
-        location.pathname.includes("/groups") ? (
+          location.pathname.includes("/groups") ? (
           <>
             {groupsMenuItems.map((item, index) => (
               <NavLink
@@ -75,7 +100,25 @@ const Sidebar = () => {
             ))}
           </>
         ) : null}
+
+        {location.pathname.includes("/dashboard") ? (
+          <>
+            <Tooltip title="Upload Files"  placement="right">
+              <Button className="nav-add-files-button" icon={<PlusOutlined className="the-upload-icon" />} />
+                
+            </Tooltip>
+            {dashboardMenuItems.map((item, index) => (
+              <NavLink to={item.path} key={index} className={(props) => props.isActive && location.pathname === item.path ? 'active-nav-item' : ''}>
+                <div className="sidebar-nav-item" >
+                  {item.icon}
+                  <div className="nav-text">{item.label}</div>
+                </div>
+              </NavLink>
+            ))}
+          </>
+        ) : null}
       </div>
+      <UploadFileModal show={uploadModal} setShow={setUploadModal} />
     </div>
   );
 };
