@@ -2,7 +2,6 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import { Web3AuthProvider } from "./contexts/SocialLoginContext";
 import { SmartAccountProvider } from "./contexts/SmartAccountContext";
-import { Web3ContextProvider } from "ethers-react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Connect from "./page/Connect/Connect";
 import Dashboard from "./page/Dashboard";
@@ -50,18 +49,15 @@ const router = createBrowserRouter([
     path: "/dashboard",
     element: <Dashboard />,
   },
-
 ]);
 
 const Index = () => {
   return (
-    <Web3ContextProvider>
-      <Web3AuthProvider>
-        <SmartAccountProvider>
-          <RouterProvider router={router} />
-        </SmartAccountProvider>
-      </Web3AuthProvider>
-    </Web3ContextProvider>
+    <Web3AuthProvider>
+      <SmartAccountProvider>
+        <RouterProvider router={router} />
+      </SmartAccountProvider>
+    </Web3AuthProvider>
   );
 };
 
