@@ -71,18 +71,18 @@ const Organisations = () => {
   }, []);
 
 
-  useEffect(() => {
-    if (searchParams.get('consent') === "true") {
-      confirm({
-        title: "Do you want to share your public key with this organisation?",
-        icon: <ExclamationCircleFilled />,
-        maskClosable: false,
-        content: 'This is required to share files with this organisation',
-        onOk: () => { },
-        cancelText: null
-      })
-    }
-  }, [searchParams]);
+  // useEffect(() => {
+  //   if (searchParams.get('consent') === "true") {
+  //     confirm({
+  //       title: "Do you want to share your public key with this organisation?",
+  //       icon: <ExclamationCircleFilled />,
+  //       maskClosable: false,
+  //       content: 'This is required to share files with this organisation',
+  //       onOk: () => { },
+  //       cancelText: null
+  //     })
+  //   }
+  // }, [searchParams]);
 
   return (
     <DashboardLayout title={"Organisations"}>
