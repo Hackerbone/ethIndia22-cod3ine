@@ -32,14 +32,21 @@ export const deployContract = async (orgName: String) => {
 
 export const getOrganizationDetails = async () => {
   try {
-    const contractInstance = new ethers.Contract(
-      localStorage.getItem("contractAddress") || "",
-      contract.abi,
-      provider
-    );
-    // call getOrgDetails function
-    const orgDetails = await contractInstance.getOrgDetails();
-    return orgDetails;
+    const orgAddress = localStorage.getItem("contractAddress");
+
+    if (orgAddress) {
+      const contractInstance = new ethers.Contract(
+        orgAddress,
+        contract.abi,
+        provider
+      );
+
+      console.log(contractInstance);
+
+      // call getOrgDetails function
+      const orgDetails = await contractInstance.getOrgDetails();
+      return orgDetails;
+    }
   } catch (error) {
     console.log(error);
   }
@@ -168,5 +175,3 @@ export const getAllGroups = async () => {
     console.log(error);
   }
 };
-
-

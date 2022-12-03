@@ -11,12 +11,15 @@ import { joinOrganisation } from "../../services/services";
 
 const JoinOrganization = () => {
   const navigate = useNavigate();
-  const [load,setLoad] = useState(false)
-
+  const [load, setLoad] = useState(false);
 
   const { address, loading: authLoading } = useWeb3AuthContext();
 
   const { loading } = useSmartAccountContext();
+
+  const contractAddress = localStorage.getItem("contractAddress") || "";
+
+  console.log("contractAddress", contractAddress);
 
   useEffect(() => {
     if (!address && !authLoading) {
@@ -31,31 +34,31 @@ const JoinOrganization = () => {
   return (
     <ConnectLayout
       image="/images/onboarding.svg"
-      title={"Join a Existing Organisation"}
+      title={"Hop into your existing SQUAD"}
       subtitle="Join your team in the journey to becoming the greatest."
     >
       <Row style={{ display: "flex", flexDirection: "column" }}>
         <Form
           onFinish={async ({ orgAddress }) => {
-            setLoad(true)
+            setLoad(true);
             let res = await joinOrganisation(orgAddress);
-            setLoad(false)
+            setLoad(false);
             navigate("/organisations");
           }}
         >
-          <Form.Item name="orgAddress">
+          <Form.Item name="orgAddress" initialValue={contractAddress}>
             <Input
-              placeholder="Enter organisation  address"
+              placeholder="Enter squad address"
               className="connect-inputField"
             />
           </Form.Item>
           <SquadButton
             style={{ padding: "0rem 3rem", width: "fit-content" }}
-            icon={<TbBuilding  style={{marginRight:10,marginBottom:-2}}  />}
+            icon={<TbBuilding style={{ marginRight: 10, marginBottom: -2 }} />}
             htmlType="submit"
             loading={load}
           >
-            Join a Organization
+            Log In
           </SquadButton>
         </Form>
       </Row>

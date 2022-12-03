@@ -35,7 +35,7 @@ const ConnectSuccess = () => {
           <CheckOutlined style={{ fontSize: 22, color: "#fb8500" }} />
         </>
       }
-      subtitle="Welcome to Squad. Select one of the two options to contiue."
+      subtitle="Welcome to Squad. Select one of the two options to continue."
     >
       <Row
         style={{
@@ -49,14 +49,14 @@ const ConnectSuccess = () => {
           icon={<PlusOutlined />}
           onClick={() => navigate("/onboarding/create")}
         >
-          Create a New Organization
+          Create a New Squad
         </SquadButton>
         <SquadButton
-          icon={<TbBuilding style={{marginRight:10,marginBottom:-2}} />}
+          icon={<TbBuilding style={{ marginRight: 10, marginBottom: -2 }} />}
           style={{ padding: "0rem 3rem", marginTop: "2rem" }}
           onClick={() => navigate("/onboarding/join")}
         >
-          Join a Organization
+          Hop into your Squad
         </SquadButton>
       </Row>
     </ConnectLayout>

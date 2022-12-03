@@ -73,6 +73,7 @@ export const Web3AuthProvider = ({ children }: any) => {
       const { ethereum } = window;
 
       if (ethereum) {
+        setLoading(true);
         const accounts = await ethereum.request({ method: "eth_accounts" });
         if (accounts.length > 0) {
           const address = accounts[0];
@@ -90,6 +91,7 @@ export const Web3AuthProvider = ({ children }: any) => {
             ethersProvider,
           });
         }
+        setLoading(false);
       }
     } catch (error) {
       console.log(error);
