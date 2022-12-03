@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import contract from "../contracts/Squad.json";
+import contract from "../contracts/contracts/Squad.json";
 
 declare global {
   interface Window {
@@ -24,6 +24,26 @@ export const deployContract = async (orgName: String) => {
     await contractRes.deployed();
     localStorage.setItem("contractAddress", contractRes.address);
     return contractRes;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const joinOrganisation = async (orgAddress: string) => {
+  try {
+    const contractInstance = new ethers.Contract(
+      orgAddress,
+      contract.abi,
+      signer
+    );
+    const userAddress = await signer.getAddress();
+    const tx = await contractInstance.isEmployee(userAddress);
+    if (tx == true) {
+      localStorage.setItem("organisationAddress", orgAddress);
+    } else {
+      alert("You are not an employee of this organisation");
+    }
+    return tx;
   } catch (error) {
     console.log(error);
   }

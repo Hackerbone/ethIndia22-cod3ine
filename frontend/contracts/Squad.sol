@@ -235,4 +235,15 @@ contract Squad {
         }
         return employees;
     }
+
+    // function to check if user in employee list
+    function isEmployee(address _employeeAddress) public view returns (bool) {
+        if(_employeeAddress == admin) return true;
+        for (uint i = 0; i < employeeAddrs.length; i++) {
+            if (employeeAddrs[i] == _employeeAddress) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
