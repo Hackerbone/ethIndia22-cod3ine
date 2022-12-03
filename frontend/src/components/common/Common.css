@@ -1,0 +1,17 @@
+
+.common-squadButton {
+    background-color: #fb8500;
+    height:2.8rem;
+    padding:0rem 1rem;
+    width:100%;
+    border: none;
+    border-radius:0px;
+    font-weight: 500;
+
+    
+}
+
+.common-squadButton:focus {
+    color: #000 !important;
+    outline:2px solid #e5e5e555;
+}

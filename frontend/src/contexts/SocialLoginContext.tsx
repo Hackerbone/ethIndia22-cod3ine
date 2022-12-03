@@ -61,11 +61,24 @@ export const Web3AuthProvider = ({ children }: any) => {
 
   // if wallet already connected close widget
   useEffect(() => {
-    console.log("hidelwallet");
     if (socialLoginSDK && socialLoginSDK.provider) {
       socialLoginSDK.hideWallet();
     }
-  }, [address, socialLoginSDK]);
+
+    // check if user is already logged in via metamask in window.ethereum
+    if (window.ethereum) {
+      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = web3Provider.getSigner();
+      signer.getAddress().then((address: string) => {
+        setWeb3State({
+          ...web3State,
+          web3Provider,
+          ethersProvider: web3Provider,
+          address,
+        });
+      });
+    }
+  }, [address, socialLoginSDK, web3State]);
 
   const connect = useCallback(async () => {
     if (address) return;

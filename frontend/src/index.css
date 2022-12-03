@@ -67,14 +67,49 @@ p {
 }
 
 .main-header-title {
-  font-size: 2rem;
-  font-weight: 600;
+  font-size: 1rem;
   color: #fb8500;
-  margin-left: 2rem;
 }
 
 .main-header-subtitle {
   font-size: 1.5rem;
   font-weight: 500;
-  margin-left: 1rem;
+}
+
+table {
+  background: transparent !important;
+  border-spacing: 0 1rem !important;
+  border-collapse: separate !important;
+}
+
+.ant-table-thead > tr > th {
+  background: none !important;
+  color: #000 !important;
+}
+
+.ant-table {
+  background: transparent !important;
+}
+
+.ant-table-row > tr {
+  background: #e5e5e51a !important;
+}
+
+/* give color to cell in antd table */
+.ant-table-row {
+  background: #e5e5e51a !important;
+  border: 2px solid #e5e5e51d !important;
+}
+
+.ant-table-row > td {
+  background: #e5e5e51a !important;
+  border: 2px solid #e5e5e511 !important;
+}
+
+.wallet-address {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-right: 2rem;
+  display: flex;
+  align-items: center;
 }
