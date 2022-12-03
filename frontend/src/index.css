@@ -114,7 +114,8 @@ table {
   margin-right: 1rem;
 }
 
-.danger {
+.danger,
+.danger:not(:disabled):hover {
   background-color: #ff0000;
   color: #fff;
 }
@@ -144,3 +145,6 @@ table {
   font-weight: 500;
   cursor: pointer;
 }
+
+/* .ant-btn-default:not(:disabled):hover {
+} */
