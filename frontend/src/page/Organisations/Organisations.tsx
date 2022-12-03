@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaEthereum } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import TableComponent from "../../components/common/TableComponent";
 import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
+import { getOrganizationDetails } from "../../services/services";
 
 const Organisations = () => {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ const Organisations = () => {
       key: "1",
       orgName: "Bugbase Organisations",
       address: "1231239182798127",
-      groups: 3,
+      employees: 3,
       role: "Owner",
     },
   ]);
@@ -50,6 +51,23 @@ const Organisations = () => {
       key: "role",
     },
   ];
+  // use effect call getOrganisationDetails
+  useEffect(() => {
+    const getOrganisationDetails = async () => {
+      const res = await getOrganizationDetails();
+      console.log("Organisation details", res);
+      setData([
+        {
+          key: "1",
+          orgName: res[0],
+          address: res[1],
+          employees: res[2].length,
+          role: "Owner",
+        },
+      ]);
+    };
+    getOrganisationDetails();
+  }, []);
 
   return (
     <DashboardLayout title={"Organisations"}>

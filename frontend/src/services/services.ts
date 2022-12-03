@@ -96,7 +96,6 @@ export const createGroup = async (groupName: string) => {
       signer
     );
     const tx = await contractInstance.createGroup(groupName);
-    await tx.wait();
     return tx;
   } catch (error) {
     console.log(error);
@@ -169,3 +168,5 @@ export const getAllGroups = async () => {
     console.log(error);
   }
 };
+
+
