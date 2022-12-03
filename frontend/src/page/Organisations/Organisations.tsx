@@ -7,15 +7,8 @@ import { getOrganizationDetails } from "../../services/services";
 
 const Organisations = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState([
-    {
-      key: "1",
-      orgName: "Bugbase Organisations",
-      address: "No Address Found",
-      employees: 3,
-      role: "Owner",
-    },
-  ]);
+  const [data, setData] = useState<any>([]);
+  const [loading,setLoading] = useState(false)
 
   const columns = [
     {
@@ -40,10 +33,10 @@ const Organisations = () => {
       ),
     },
     {
-      title: "Groups",
-      dataIndex: "groups",
-      key: "groups",
-      render: (groups: any) => <div>{groups} Groups</div>,
+      title: "Employees",
+      dataIndex: "employees",
+      key: "employees",
+      render: (employees: any) => <div>{employees} Employees</div>,
     },
     {
       title: "Role",
@@ -55,6 +48,7 @@ const Organisations = () => {
   // use effect call getOrganisationDetails
   useEffect(() => {
     const getOrganisationDetails = async () => {
+      setLoading(true)
       const res = await getOrganizationDetails();
       console.log("Organisation details", res);
       setData([
@@ -62,17 +56,18 @@ const Organisations = () => {
           key: "1",
           orgName: res[0],
           address: res[1],
-          employees: res[2].length,
+          employees: res[2].length || 0,
           role: "Owner",
         },
       ]);
+      setLoading(false)
     };
     getOrganisationDetails();
   }, []);
 
   return (
     <DashboardLayout title={"Organisations"}>
-      <TableComponent columns={columns} dataSource={data} />
+      <TableComponent loading={loading} columns={columns} dataSource={data} />
     </DashboardLayout>
   );
 };

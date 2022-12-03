@@ -13,13 +13,7 @@ import AddUserGroupModal from "../../components/Modals/AddUserGroupModal";
 
 const Groups = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState([
-    {
-      groupName: "Dev Group",
-      files: 3,
-      users: 3,
-    },
-  ]);
+  const [data, setData] = useState<any>([]);
 
   const menu = (
     <Menu
@@ -92,23 +86,28 @@ const Groups = () => {
     },
   ];
 
-  useEffect(() => {
-    const getGroups = async () => {
-      const res = await getAllGroups();
-      console.log("Organisation details", res);
-      // change according to details from creater gro
-      let tableData = [...data];
-      res.forEach((val: string, ind: number) => {
-        console.log(val);
-        tableData.push({
-          groupName: val,
-          files: 4,
-          users: 3,
-        });
-        setData(tableData);
+  const getGroups = async () => {
+    const res = await getAllGroups();
+    console.log("Organisation details", res);
+    // change according to details from creater gro
+    let tableData = [...data];
+    res.forEach((val: string, ind: number) => {
+      console.log(val);
+      tableData.push({
+        groupName: val,
+        files: 4,
+        users: 3,
       });
-    };
-    getGroups();
+      setData(tableData);
+    });
+  };
+
+  useEffect(() => {
+    const interval = setInterval(async() => {
+      await getGroups();
+    },2000)
+
+    return () => clearInterval(interval)
   }, []);
 
   const [showModal, setShowModal] = useState(false);
