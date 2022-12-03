@@ -7,6 +7,7 @@ contract Squad {
 
     mapping(address => string) public employeeNames;
     address[] public employeeAddrs;
+    mapping(address => bytes32) public employeePubKeys;
 
     struct Employee {
         string name;
@@ -77,8 +78,9 @@ contract Squad {
         require(msg.sender == admin, "Only admin can create groups");
         require(bytes(_groupName).length > 0, "Group name cannot be empty");
         for (uint256 i = 0; i < groups.length; i++) {
-            if (keccak256(bytes(groups[i].name)) == keccak256(bytes(_groupName)))
-                revert("Group already exists");
+            if (
+                keccak256(bytes(groups[i].name)) == keccak256(bytes(_groupName))
+            ) revert("Group already exists");
         }
         // make via memory
         Group storage newGroup = groups.push();
@@ -98,7 +100,9 @@ contract Squad {
             "Employee does not exist"
         );
         for (uint256 i = 0; i < groups.length; i++) {
-            if (keccak256(bytes(groups[i].name)) == keccak256(bytes(_groupName))) {
+            if (
+                keccak256(bytes(groups[i].name)) == keccak256(bytes(_groupName))
+            ) {
                 for (uint256 j = 0; j < groups[i].members.length; j++) {
                     if (groups[i].members[j] == _employee)
                         revert("Employee already exists in group");
@@ -111,16 +115,19 @@ contract Squad {
     }
 
     // delete employee from a group by groupName
-    function deleteEmployeeFromGroup(string memory _groupName, address _employee)
-        public
-    {
+    function deleteEmployeeFromGroup(
+        string memory _groupName,
+        address _employee
+    ) public {
         require(msg.sender == admin, "Only admin can delete employees");
         require(
             bytes(employeeNames[_employee]).length > 0,
             "Employee does not exist"
         );
         for (uint256 i = 0; i < groups.length; i++) {
-            if (keccak256(bytes(groups[i].name)) == keccak256(bytes(_groupName))) {
+            if (
+                keccak256(bytes(groups[i].name)) == keccak256(bytes(_groupName))
+            ) {
                 for (uint256 j = 0; j < groups[i].members.length; j++) {
                     if (groups[i].members[j] == _employee) {
                         groups[i].members[j] = groups[i].members[
@@ -148,7 +155,9 @@ contract Squad {
             "Only employees can add files"
         );
         for (uint256 i = 0; i < groups.length; i++) {
-            if (keccak256(bytes(groups[i].name)) == keccak256(bytes(_groupName))) {
+            if (
+                keccak256(bytes(groups[i].name)) == keccak256(bytes(_groupName))
+            ) {
                 for (uint256 j = 0; j < groups[i].members.length; j++) {
                     if (groups[i].members[j] == msg.sender) {
                         groups[i].files[groups[i].fileCount] = File(
@@ -173,7 +182,9 @@ contract Squad {
         returns (File[] memory)
     {
         for (uint256 i = 0; i < groups.length; i++) {
-            if (keccak256(bytes(groups[i].name)) == keccak256(bytes(_groupName))) {
+            if (
+                keccak256(bytes(groups[i].name)) == keccak256(bytes(_groupName))
+            ) {
                 File[] memory files = new File[](groups[i].fileCount);
                 for (uint256 j = 0; j < groups[i].fileCount; j++) {
                     files[j] = groups[i].files[j];
@@ -212,7 +223,9 @@ contract Squad {
         returns (Employee[] memory)
     {
         for (uint256 i = 0; i < groups.length; i++) {
-            if (keccak256(bytes(groups[i].name)) == keccak256(bytes(_groupName))) {
+            if (
+                keccak256(bytes(groups[i].name)) == keccak256(bytes(_groupName))
+            ) {
                 Employee[] memory employees = new Employee[](
                     groups[i].members.length
                 );
@@ -233,9 +246,24 @@ contract Squad {
         if (_employeeAddress == admin) return true;
         for (uint256 i = 0; i < employeeAddrs.length; i++) {
             if (employeeAddrs[i] == _employeeAddress) {
-                return true;
+                return (true);
             }
         }
         return false;
+    }
+
+    function isPublicKeySet(address _employeeAddress)
+        public
+        view
+        returns (bool)
+    {
+        if (employeePubKeys[_employeeAddress].length > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    function setPublicKey(bytes32 _publicKey) public {
+        employeePubKeys[msg.sender] = _publicKey;
     }
 }
