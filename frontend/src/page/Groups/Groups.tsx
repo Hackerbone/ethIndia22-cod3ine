@@ -86,20 +86,23 @@ const Groups = () => {
       ),
     },
   ];
-  const getGroups = async () => {
-    const res = await getAllGroups();
-    console.log("Organisation details", res);
-    // change according to details from creater gro
-    setData([
-      {
-        groupName: res[0][0],
-        files: 4,
-        users: 3,
-      },
-    ]);
-  };
 
   useEffect(() => {
+    const getGroups = async () => {
+      const res = await getAllGroups();
+      console.log("Organisation details", res);
+      // change according to details from creater gro
+      let tableData = [...data];
+      res.forEach((val: any[], ind: number) => {
+        console.log(val);
+        tableData.push({
+          groupName: val[0],
+          files: 4,
+          users: 3,
+        });
+        setData(tableData);
+      });
+    };
     getGroups();
   }, []);
 
