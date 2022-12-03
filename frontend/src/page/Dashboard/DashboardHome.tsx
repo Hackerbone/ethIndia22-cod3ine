@@ -97,11 +97,21 @@ const DashboardHome = () => {
           <Button
             onClick={async () => {
               console.log(record, "Download");
-              await handleDownloadData(
+              const downloadedFile = await handleDownloadData(
                 record.encfilehash,
                 record.enckeyshash,
                 record.file
               );
+              if (downloadedFile) {
+                console.log("downloadedFile", downloadedFile);
+                const url = window.URL.createObjectURL(downloadedFile);
+                const link = document.createElement("a");
+                link.setAttribute("download", downloadedFile.name);
+                link.setAttribute("href", url);
+                document.body.appendChild(link);
+                console.log("link", link);
+                link.click();
+              }
             }}
           >
             Download

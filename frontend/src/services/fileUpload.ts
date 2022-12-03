@@ -96,11 +96,15 @@ export const handleFileUpload = async (file: File, groupName: string) => {
     );
 
     /// TEST ////
-    const walletAddress = await signer.getAddress();
-    const data = encryptedKeysObj[0].buf;
-    console.log(walletAddress, data);
-    const res = await decryptData(walletAddress, data);
-    console.log("res", res);
+    // const walletAddress = await signer.getAddress();
+    // const ourEncKey = encryptedKeysObj.find(
+    //   (keyObj: any) => keyObj.employeeAddress === walletAddress
+    // );
+    // const buf = ourEncKey.buf;
+    // console.log(ourEncKey);
+    // console.log(walletAddress, buf);
+    // const res = await decryptData(walletAddress, buf);
+    // console.log("res", res);
     /// TEST ////
 
     // upload encrypted file to IPFS
@@ -130,28 +134,6 @@ export const handleFileUpload = async (file: File, groupName: string) => {
   }
 };
 
-async function decryptData(account: string, data: Buffer): Promise<Buffer> {
-  // Reconstructing the original object outputed by encryption
-  const structuredData = {
-    version: "x25519-xsalsa20-poly1305",
-    ephemPublicKey: data.slice(0, 32).toString("base64"),
-    nonce: data.slice(32, 56).toString("base64"),
-    ciphertext: data.slice(56).toString("base64"),
-  };
-  // Convert data to hex string required by MetaMask
-  const ct = `0x${Buffer.from(JSON.stringify(structuredData), "utf8").toString(
-    "hex"
-  )}`;
-  // Send request to MetaMask to decrypt the ciphertext
-  // Once again application must have acces to the account
-  const decrypt = await window.ethereum.request({
-    method: "eth_decrypt",
-    params: [ct, account],
-  });
-  // Decode the base85 to final bytes
-  return ascii85.decode(decrypt);
-}
-
 export const handleDownloadData = async (
   path: any,
   keyPath: any,
@@ -178,28 +160,53 @@ export const handleDownloadData = async (
     const ourEncKey = enc_key_json.find(
       (keyObj: any) => keyObj.employeeAddress === walletAddress
     );
-    console.log("ENC KEY:", ourEncKey.buf.data);
-
+    console.log("ENC KEY:", ourEncKey.buf);
+    // convert ourEnc.Key to UInt8Array Buffer
+    const ourEncKeyBuffer = Buffer.from(ourEncKey.buf);
     // DECRYPT KEY OBJ
-    const res = await decryptData(walletAddress, ourEncKey.buf.data);
-    console.log(res);
+    const res: any = await decryptData(walletAddress, ourEncKeyBuffer);
+    // convert res to JSON
+    const resJson = JSON.parse(res);
+    console.log(resJson);
 
     // DECRYPTION OF FILE
-    // const blob = new Blob([enc_data], { type: "application/octet-stream" });
-    // const textEncryptedFile = await getFileAsTextFromBlob(blob);
-    // const decryptedFile = await AESDecryptFile(
-    //   textEncryptedFile,
-    //   keyObj.key,
-    //   keyObj.iv
-    // );
-    // const uintArr = convertWordArrayToUint8Array(decryptedFile);
-    // const decryptedFileObject = new File([uintArr], filename);
-    // console.log(decryptedFileObject);
-    // return decryptedFileObject;
+    const blob = new Blob([enc_data], { type: "application/octet-stream" });
+    const textEncryptedFile = await getFileAsTextFromBlob(blob);
+    const decryptedFile = await AESDecryptFile(
+      textEncryptedFile,
+      resJson.key,
+      resJson.iv
+    );
+    const uintArr = convertWordArrayToUint8Array(decryptedFile);
+    const decryptedFileObject = new File([uintArr], filename);
+    console.log(decryptedFileObject);
+    return decryptedFileObject;
   } catch (err) {
     console.log(err);
   }
 };
+
+async function decryptData(account: string, data: Buffer): Promise<Buffer> {
+  // Reconstructing the original object outputed by encryption
+  const structuredData = {
+    version: "x25519-xsalsa20-poly1305",
+    ephemPublicKey: data.slice(0, 32).toString("base64"),
+    nonce: data.slice(32, 56).toString("base64"),
+    ciphertext: data.slice(56).toString("base64"),
+  };
+  // Convert data to hex string required by MetaMask
+  const ct = `0x${Buffer.from(JSON.stringify(structuredData), "utf8").toString(
+    "hex"
+  )}`;
+  // Send request to MetaMask to decrypt the ciphertext
+  // Once again application must have acces to the account
+  const decrypt = await window.ethereum.request({
+    method: "eth_decrypt",
+    params: [ct, account],
+  });
+  // Decode the base85 to final bytes
+  return ascii85.decode(decrypt);
+}
 
 const AESDecryptFile = async (encryptedFile: any, secretKey: any, iv: any) => {
   var decrypted = CryptoJS.AES.decrypt(encryptedFile, secretKey, {
