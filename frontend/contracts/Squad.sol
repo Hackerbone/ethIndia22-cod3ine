@@ -204,6 +204,31 @@ contract Squad {
         return groupNames;
     }
 
+    // function to check if user in employee list
+    function isEmployee(address _employeeAddress) public view returns (bool) {
+        if (_employeeAddress == admin) return true;
+        for (uint256 i = 0; i < employeeAddrs.length; i++) {
+            if (employeeAddrs[i] == _employeeAddress) {
+                return (true);
+            }
+        }
+        return false;
+    }
+
+    // function to add employee public key to mapping
+    function addEmployeePublicKey(string memory _key) public {
+        require(
+            bytes(employeeNames[msg.sender]).length > 0,
+            "Employee does not exist"
+        );
+        employeepk[msg.sender] = _key;
+    }
+
+    // function to set public key of employee
+    function setPublicKey(string memory _publicKey) public {
+        employeepk[msg.sender] = _publicKey;
+    }
+
     // get all employees with their names as employee array
     function getEmployees() public view returns (Employee[] memory) {
         Employee[] memory employees = new Employee[](employeeAddrs.length);
@@ -239,32 +264,5 @@ contract Squad {
             }
         }
         revert("Group does not exist");
-    }
-
-    // function to check if user in employee list
-    function isEmployee(address _employeeAddress) public view returns (bool) {
-        if (_employeeAddress == admin) return true;
-        for (uint256 i = 0; i < employeeAddrs.length; i++) {
-            if (employeeAddrs[i] == _employeeAddress) {
-                return (true);
-            }
-        }
-        return false;
-    }
-
-    function isPublicKeySet(address _employeeAddress)
-        public
-        view
-        returns (bool)
-    {
-        if (bytes(employeepk[_employeeAddress]).length > 0) {
-            return true;
-        }
-        return false;
-    }
-
-    // function to set public key of employee
-    function setPublicKey(string memory _publicKey) public {
-        employeepk[msg.sender] = _publicKey;
     }
 }

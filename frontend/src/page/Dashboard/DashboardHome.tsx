@@ -8,7 +8,11 @@ import SearchBar from "../../components/common/SearchBar";
 import TableComponent from "../../components/common/TableComponent";
 import UploadFileModal from "../../components/Modals/UploadFileModal";
 import { handleDownloadData } from "../../services/fileUpload";
-import { getFilesByGroup, setPublicKey } from "../../services/services";
+import {
+  getFilesByGroup,
+  getAllGroups,
+  lolFunc,
+} from "../../services/services";
 
 const DashboardHome = () => {
   const params = useParams();
@@ -169,7 +173,7 @@ const DashboardHome = () => {
       </h1>
       <Button
         onClick={async () => {
-          const res = await setPublicKey();
+          const res = await lolFunc();
           console.log(res);
         }}
       >

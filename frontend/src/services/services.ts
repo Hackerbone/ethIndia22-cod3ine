@@ -233,14 +233,15 @@ export const isPublicKeySet = async () => {
       contract.abi,
       signer
     );
-    const tx = await contractInstance.isPublicKeySet();
+    const userAddress = await signer.getAddress();
+    const tx = await contractInstance.isPublicKeySet(userAddress);
     return tx;
   } catch (error) {
     console.log(error);
   }
 };
 
-export const setPublicKey = async () => {
+export const lolFunc = async () => {
   try {
     const contractInstance = new ethers.Contract(
       localStorage.getItem("contractAddress") || "",
@@ -248,15 +249,17 @@ export const setPublicKey = async () => {
       signer
     );
     const walletAddress = await signer.getAddress();
-    const publicKeyb64 = await window.ethereum.request({
-      method: "eth_getEncryptionPublicKey",
-      params: [walletAddress],
-    });
-    let buf = Buffer.from(publicKeyb64, "base64");
-    let data: string = "0x" + buf.toString("hex");
+    // const publicKeyb64 = await window.ethereum.request({
+    //   method: "eth_getEncryptionPublicKey",
+    //   params: [walletAddress],
+    // });
+    // let buf = Buffer.from(publicKeyb64, "base64");
+    // let data: string = "0x" + buf.toString("hex");
     // pack to 32 bytes string
-    console.log(data);
-    const tx = await contractInstance.setPublicKey(data);
+    // console.log(data);
+    const tx = await contractInstance.addEmployeePublicKey(
+      "0xfff1cb9e8ada37fe9efa63fe3f1dc2b91a12fa4fcf44b17b38168f648bb8286c"
+    );
     return tx;
   } catch (error) {
     console.log(error);
