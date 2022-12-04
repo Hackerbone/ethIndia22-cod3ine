@@ -36,10 +36,6 @@ Existing solutions for team management on Web3 personal projects by kids that ar
   <img src="./imgs/mock2.jpg" alt="squad"/>
 </p>
 
-<p align="center">
-  <img src="./imgs/mock3.jpg" alt="squad"/>
-</p>
-
 ## TECH USED
 
 - Figma
