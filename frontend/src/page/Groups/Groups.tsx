@@ -132,10 +132,15 @@ const Groups = () => {
       <SpinLoader isLoading={loading}>
         <TableComponent columns={columns} dataSource={data} />
       </SpinLoader>{" "}
-      <CreateGroupModal show={showModal} setShow={setShowModal} />
+      <CreateGroupModal
+        show={showModal}
+        setShow={setShowModal}
+        setLoading={setLoading}
+      />
       <AddUserGroupModal
         show={showAdduserModal}
         setShow={setShowAddUserModal}
+        setLoading={setLoading}
       />
     </DashboardLayout>
   );
