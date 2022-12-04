@@ -100,7 +100,8 @@
   font-weight: 500;
 }
 
-.active-nav-item {
+.active-nav-item,
+.nav-item {
   text-decoration: none !important;
 }
 

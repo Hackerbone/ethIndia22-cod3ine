@@ -146,13 +146,13 @@ const DashboardHome = () => {
 
   return (
     <div className="dashboard-main-container">
-      <Row style={{marginTop:"2rem"}}>
+      <Row style={{ marginTop: "2rem" }}>
         <SearchBar />
         <SquadButton
           style={{
             marginLeft: "1rem",
-            width:"fit-content",
-            color: "#fff"
+            width: "fit-content",
+            color: "#fff",
           }}
           onClick={() => setShow(true)}
         >
@@ -163,11 +163,21 @@ const DashboardHome = () => {
         Quick Access
       </h1>
       <div style={{ display: "flex", gap: "1rem" }}>
+        {/* <FileComponentLarge />
         <FileComponentLarge />
         <FileComponentLarge />
         <FileComponentLarge />
-        <FileComponentLarge />
-        <FileComponentLarge />
+        <FileComponentLarge /> */}
+        {data.map((file: any) => (
+          <FileComponentLarge
+            name={file.file}
+            date={file.date}
+            by={file.by}
+            onClick={() => {
+              console.log("Clicked");
+            }}
+          />
+        ))}
       </div>
       <h1 className="dashboardLayout-title" style={{ marginTop: "3rem" }}>
         Your Files

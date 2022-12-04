@@ -56,7 +56,7 @@ const InviteUsersModal = ({ show, setShow }: any) => {
             style={{ width: "100%" }}
           />
         </Form.Item>
-        <Form.Item name="organisation">
+        {/* <Form.Item name="organisation">
           <Select
             placeholder="Select Organisation"
             className="search-bar-common-select"
@@ -64,7 +64,7 @@ const InviteUsersModal = ({ show, setShow }: any) => {
           >
             <Select.Option>Bugbase Security</Select.Option>
           </Select>
-        </Form.Item>
+        </Form.Item> */}
         <SquadButton
           type="primary"
           htmlType="submit"

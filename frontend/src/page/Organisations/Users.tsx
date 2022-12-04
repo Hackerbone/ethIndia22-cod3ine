@@ -8,10 +8,12 @@ import SquadButton from "../../components/common/SquadButton";
 import TableComponent from "../../components/common/TableComponent";
 import DashboardLayout from "../../components/DashboardLayout/DashboardLayout";
 import InviteUsersModal from "../../components/Modals/InviteUsersModal";
+import SpinLoader from "../../components/SpinLoader";
 import { getAllEmployees } from "../../services/services";
 
 const Users = () => {
   const [data, setData] = useState<any>([]);
+  const [loading, setLoading] = useState(false);
 
   const menu = (
     <Menu
@@ -75,11 +77,11 @@ const Users = () => {
   const getEmpOrg = async () => {
     const res = await getAllEmployees();
     console.log("Organisation details", res);
-    let tableData = [...data];
+    let tableData: any = [];
     res.forEach((val: any[], ind: number) => {
       console.log(val);
       tableData.push({
-        key: ind +1,
+        key: ind + 1,
         displayName: val[0],
         address: val[1],
         groups: 3,
@@ -89,15 +91,17 @@ const Users = () => {
   };
 
   useEffect(() => {
-   const interval = setInterval(async() => {
+    setLoading(true);
+    const interval = setInterval(async () => {
       await getEmpOrg();
-    },2000)
-    return () => clearInterval(interval)
-    
+      setLoading(false);
+    }, 2000);
+
+    return () => clearInterval(interval);
   }, []);
   const [showModal, setShowModal] = useState(false);
   return (
-    <DashboardLayout title={"Organisation Access Manager"}>
+    <DashboardLayout title={"Organisation Members"}>
       <SearchBar
         extra={
           <SquadButton
@@ -109,7 +113,9 @@ const Users = () => {
           </SquadButton>
         }
       />
-      <TableComponent columns={columns} dataSource={data} />
+      <SpinLoader isLoading={loading}>
+        <TableComponent columns={columns} dataSource={data} />
+      </SpinLoader>{" "}
       <InviteUsersModal show={showModal} setShow={setShowModal} />
     </DashboardLayout>
   );

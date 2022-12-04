@@ -16,13 +16,6 @@ const ConnectSuccess = () => {
 
   const { loading } = useSmartAccountContext();
 
-  useEffect(() => {
-    if (!address && !authLoading) {
-      message.error("Please connect your wallet");
-      navigate("/connect");
-    }
-  }, [address, authLoading, navigate]);
-
   if (loading || authLoading) {
     return <PageLoader />;
   }

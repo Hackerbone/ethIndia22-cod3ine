@@ -10,11 +10,12 @@ import { Dropdown, Menu } from "antd";
 import { useNavigate } from "react-router-dom";
 import { getAllGroups } from "../../services/services";
 import AddUserGroupModal from "../../components/Modals/AddUserGroupModal";
+import SpinLoader from "../../components/SpinLoader";
 
 const Groups = () => {
   const navigate = useNavigate();
   const [data, setData] = useState<any>([]);
-
+  const [loading, setLoading] = useState(false);
   const menu = (
     <Menu
       items={[
@@ -88,7 +89,6 @@ const Groups = () => {
 
   const getGroups = async () => {
     const res = await getAllGroups();
-    console.log("Organisation details", res);
     // change according to details from creater gro
     let tableData = [...data];
     res.forEach((val: string, ind: number) => {
@@ -103,11 +103,14 @@ const Groups = () => {
   };
 
   useEffect(() => {
-    const interval = setInterval(async() => {
-      await getGroups();
-    },2000)
+    setLoading(true);
 
-    return () => clearInterval(interval)
+    const interval = setInterval(async () => {
+      await getGroups();
+      setLoading(false);
+    }, 2000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const [showModal, setShowModal] = useState(false);
@@ -126,7 +129,9 @@ const Groups = () => {
           </SquadButton>
         }
       />
-      <TableComponent columns={columns} dataSource={data} />
+      <SpinLoader isLoading={loading}>
+        <TableComponent columns={columns} dataSource={data} />
+      </SpinLoader>{" "}
       <CreateGroupModal show={showModal} setShow={setShowModal} />
       <AddUserGroupModal
         show={showAdduserModal}

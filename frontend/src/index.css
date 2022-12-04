@@ -148,3 +148,7 @@ table {
 
 /* .ant-btn-default:not(:disabled):hover {
 } */
+
+a {
+  text-decoration: none !important;
+}

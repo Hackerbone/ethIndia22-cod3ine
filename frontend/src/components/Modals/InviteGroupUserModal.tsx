@@ -9,19 +9,18 @@ import { ethers } from "ethers";
 const provider: ethers.providers.Web3Provider =
   new ethers.providers.Web3Provider(window.ethereum);
 
-
-
 const InviteGroupUsersModal = ({ show, setShow, groupName }: any) => {
-  const [ load,setLoad] = useState(false)
+  const [load, setLoad] = useState(false);
   return (
     <ModalComponent show={show} setShow={setShow} title="Invite User to Group">
       <Form
         style={{ marginTop: "5rem", marginBottom: "2rem" }}
         onFinish={async (value) => {
           console.log(value);
-          setLoad(true)
+          setLoad(true);
 
-          const EnsRegex = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/ig
+          const EnsRegex =
+            /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi;
           let employeeAddress = value.employeeAddress;
 
           if (EnsRegex.test(value.employeeAddress)) {
@@ -34,7 +33,7 @@ const InviteGroupUsersModal = ({ show, setShow, groupName }: any) => {
             employeeAddress
           );
           console.log("address added", res);
-          setLoad(false)
+          setLoad(false);
           setShow(false);
         }}
         layout="vertical"
@@ -54,7 +53,7 @@ const InviteGroupUsersModal = ({ show, setShow, groupName }: any) => {
             style={{ width: "100%" }}
           />
         </Form.Item>
-        <Form.Item name="organisation">
+        {/* <Form.Item name="organisation">
           <Select
             placeholder="Select Organisation"
             className="search-bar-common-select"
@@ -62,7 +61,7 @@ const InviteGroupUsersModal = ({ show, setShow, groupName }: any) => {
           >
             <Select.Option>Bugbase Security</Select.Option>
           </Select>
-        </Form.Item>
+        </Form.Item> */}
         <SquadButton
           type="primary"
           htmlType="submit"

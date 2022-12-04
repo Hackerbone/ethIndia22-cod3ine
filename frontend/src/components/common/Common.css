@@ -1,85 +1,76 @@
-
 .common-squadButton {
-    background-color: #fb8500;
-    height:2.8rem;
-    padding:0rem 1rem;
-    width:100%;
-    border: none;
-    border-radius:0px;
-    font-weight: 500;
-
-    
+  background-color: #fb8500;
+  height: 2.8rem;
+  padding: 0rem 1rem;
+  width: 100%;
+  border: none;
+  border-radius: 0px;
+  font-weight: 500;
 }
 
 .common-squadButton:focus {
-    color: #000 !important;
-    outline:2px solid #e5e5e555;
+  color: #000 !important;
+  outline: 2px solid #e5e5e555;
 }
 
 .tablecomponent-main-container {
-
 }
 
-.tablecomponent-main-container .ant-table .ant-table-thead .ant-table-cell{
-    border-bottom: 0;
-
+.tablecomponent-main-container .ant-table .ant-table-thead .ant-table-cell {
+  border-bottom: 0;
 }
 
 .tablecomponent-main-container .ant-table-cell::before {
-    content: none !important;
-    background: none;
+  content: none !important;
+  background: none;
 }
 
-.tablecomponent-main-container .ant-table-tbody .ant-table-row  {
-    background: #E5E5E51A !important;
-    border: 2px solid #E5E5E5 !important;
+.tablecomponent-main-container .ant-table-tbody .ant-table-row {
+  background: #e5e5e51a !important;
+  border: 2px solid #e5e5e5 !important;
 }
 
 .orgtable-orgName {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-
+  cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
 .orgtable-orgName:hover {
-    color: #fb8500;
-    text-decoration:underline;
+  color: #fb8500;
+  text-decoration: underline;
 }
 
 .search-bar-common {
-    border: none;
-    border-radius:0;
-    height:2.7rem;
-    background-color: #E5E5E580;
-    width: fit-content;
-    min-width:36rem;
+  border: none;
+  border-radius: 0;
+  height: 2.7rem;
+  background-color: #e5e5e580;
+  width: fit-content;
+  min-width: 36rem;
 }
 
 .search-bar-common .ant-input {
-    background-color: transparent;
-    margin-left:.5rem;
-
+  background-color: transparent;
+  margin-left: 0.5rem;
 }
 
 .search-bar-common-select {
-    border: none;
-    border-radius:0;
-    height:2.7rem;
-    background-color: #E5E5E580;
-    width: fit-content;
-    min-width:36rem;
+  border: none;
+  border-radius: 0;
+  height: 2.7rem;
+  background-color: #e5e5e580;
+  width: fit-content;
+  min-width: 36rem;
 }
 
 .search-bar-common-select .ant-select-selector {
-    background-color: transparent !important;
-    display:flex;
-align-items: center;
-    height:2.7rem !important;
-    border-radius:0;
-    border:none;
-
-
+  background-color: transparent !important;
+  display: flex;
+  align-items: center;
+  height: 2.7rem !important;
+  border-radius: 0;
+  border: none;
 }
 
 /* .search-bar-common-select .ant-select-selector .ant-select-selection-search {
@@ -88,93 +79,92 @@ align-items: center;
 } */
 
 .modal-modal-component .ant-modal-header .ant-modal-title {
-    font-size:1.6rem;
-    color: #fb8500;
+  font-size: 1.6rem;
+  color: #fb8500;
 }
 
-
 .fileComponent-large-contaier {
-    width: 14rem;
-    height: 12rem;
-    background:#e5e5e54d;
-    border:2px solid #e5e5e5;
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    justify-content:space-between;
-    cursor: pointer;
-    border-radius: 0;
+  width: 14rem;
+  height: 12rem;
+  background: #e5e5e54d;
+  border: 2px solid #e5e5e5;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  border-radius: 0;
 }
 
 .fileComponent-filetype-large {
-    background:#e5e5e5;
-    width: 5rem;
-    height: 5rem;
-    display: flex;
-    justify-content:center;
-    align-items:center;
+  background: #e5e5e5;
+  width: 5rem;
+  height: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .filecl-filetype {
-    font-size: 2rem;
-    color:#e931f7;
+  font-size: 2rem;
+  color: #e931f7;
 }
 
 .filecl-name {
-    font-weight: 500;
-    margin-bottom:0rem;
-    margin-top: 0;
+  font-weight: 500;
+  margin-bottom: 0rem;
+  margin-top: 0;
+  display: inline-block;
+  word-break: break-all;
+  white-space: nowrap;
 }
 
 .filecl-size {
-    font-size:.8rem;
-    margin:0;
+  font-size: 0.8rem;
+  margin: 0;
 }
 
 .fileComponent-filetype-small {
-    background:#e5e5e5;
-    width: 3rem;
-    height: 3rem;
-    display: flex;
-    justify-content:center;
-    align-items:center;
+  background: #e5e5e5;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .filecs-filetype {
-    font-size: 1.3rem;
-    color:red;
+  font-size: 1.3rem;
+  color: red;
 }
 
-
 .filecs-name {
-    font-weight: 500;
-    margin-bottom:0rem;
-    margin-top: 0;
-    font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 0rem;
+  margin-top: 0;
+  font-size: 1.1rem;
 }
 
 .filecs-size {
-    font-size:.8rem;
-    margin:0;
-    color:#333;
+  font-size: 0.8rem;
+  margin: 0;
+  color: #333;
 }
 
-
 .nav-add-files-button {
-    background-color: #fb8500;
-    width: 3rem !important;
-    height:3rem;
-    display: flex;
-    justify-content:center;
-    align-items:center;
-    border-radius:2px;
-    margin-top: 3rem;
-    cursor: pointer;
-    border: none;
-
+  background-color: #fb8500;
+  width: 3rem !important;
+  height: 3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 2px;
+  margin-top: 3rem;
+  cursor: pointer;
+  border: none;
 }
 
 .the-upload-icon {
-    color: #fff;
-    font-size:1.7rem;
+  color: #fff;
+  font-size: 1.7rem;
 }
