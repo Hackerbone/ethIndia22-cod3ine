@@ -5,6 +5,7 @@ import { FiMoreVertical } from "react-icons/fi";
 import { useParams } from "react-router-dom";
 import FileComponentLarge from "../../components/common/FileComponentLarge";
 import SearchBar from "../../components/common/SearchBar";
+import SquadButton from "../../components/common/SquadButton";
 import TableComponent from "../../components/common/TableComponent";
 import UploadFileModal from "../../components/Modals/UploadFileModal";
 import { handleDownloadData } from "../../services/fileUpload";
@@ -89,7 +90,6 @@ const DashboardHome = () => {
         <div
           style={{
             display: "flex",
-            justifyContent: "flex-end",
             alignItems: "center",
             paddingRight: "2rem",
           }}
@@ -142,17 +142,18 @@ const DashboardHome = () => {
 
   return (
     <div className="dashboard-main-container">
-      <Row>
+      <Row style={{marginTop:"2rem"}}>
         <SearchBar />
-        <Button
-          className="btn"
+        <SquadButton
           style={{
             marginLeft: "1rem",
+            width:"fit-content",
+            color: "#fff"
           }}
           onClick={() => setShow(true)}
         >
           Upload File
-        </Button>
+        </SquadButton>
       </Row>
       <h1 className="dashboardLayout-title" style={{ marginTop: "3rem" }}>
         Quick Access

@@ -14,13 +14,7 @@ import { getEmployeesInGroup } from "../../services/services";
 const GroupUsers = () => {
   const params = useParams();
   const groupName = params.groupname;
-  const [data, setData] = useState([
-    {
-      displayName: "Seturamen",
-      address: "1231239182798127",
-      role: "Owner",
-    },
-  ]);
+  const [data, setData] = useState<any>([]);
 
   const menu = (
     <Menu
@@ -80,23 +74,29 @@ const GroupUsers = () => {
     },
   ];
 
-  useEffect(() => {
-    const getEmpInGroup = async () => {
-      console.log(groupName);
-      if (!groupName) return;
-      const res = await getEmployeesInGroup(groupName);
-      console.log("Organisation details", res);
-      let valData = [...data];
-      res.forEach(async (val: any) => {
-        valData.push({
-          displayName: val.name,
-          address: val.addr,
-          role: "Member",
-        });
+  const getEmpInGroup = async () => {
+    console.log(groupName);
+    if (!groupName) return;
+    const res = await getEmployeesInGroup(groupName);
+    console.log("Organisation details", res);
+    let valData = [...data];
+    res.forEach(async (val: any) => {
+      valData.push({
+        displayName: val.name,
+        address: val.addr,
+        role: "Member",
       });
-      setData(valData);
-    };
-    getEmpInGroup();
+    });
+    setData(valData);
+  };
+
+  useEffect(() => {
+    const interval = setInterval(async() => {
+      await getEmpInGroup();
+    },2000)
+
+    return () => clearInterval(interval)
+    
   }, []);
 
   const [showModal, setShowModal] = useState(false);
