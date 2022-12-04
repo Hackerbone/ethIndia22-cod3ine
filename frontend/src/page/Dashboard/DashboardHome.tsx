@@ -169,7 +169,8 @@ const DashboardHome = () => {
       </h1>
       <Button
         onClick={async () => {
-          await setPublicKey();
+          const res = await setPublicKey();
+          console.log(res);
         }}
       >
         SET PUBLIC KEY

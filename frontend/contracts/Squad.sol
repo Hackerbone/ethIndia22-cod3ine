@@ -7,7 +7,7 @@ contract Squad {
 
     mapping(address => string) public employeeNames;
     address[] public employeeAddrs;
-    mapping(address => bytes32) public employeePubKeys;
+    mapping(address => string) public employeepk;
 
     struct Employee {
         string name;
@@ -257,13 +257,14 @@ contract Squad {
         view
         returns (bool)
     {
-        if (employeePubKeys[_employeeAddress].length > 0) {
+        if (bytes(employeepk[_employeeAddress]).length > 0) {
             return true;
         }
         return false;
     }
 
-    function setPublicKey(bytes32 _publicKey) public {
-        employeePubKeys[msg.sender] = _publicKey;
+    // function to set public key of employee
+    function setPublicKey(string memory _publicKey) public {
+        employeepk[msg.sender] = _publicKey;
     }
 }
