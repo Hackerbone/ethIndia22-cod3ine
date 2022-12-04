@@ -36,7 +36,8 @@
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject",
-    "prestart": "truffle compile && cp -r build/contracts src/contracts"
+    "prestart": "truffle compile && cp -r build/contracts src/contracts",
+    "prebuild": "truffle compile && cp -r build/contracts src/contracts"
   },
   "eslintConfig": {
     "extends": [
