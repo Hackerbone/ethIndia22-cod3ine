@@ -4,6 +4,12 @@ import { FaEthereum } from "react-icons/fa";
 import ModalComponent from "../common/ModalComponent";
 import SquadButton from "../common/SquadButton";
 import { addEmployeeToGroup } from "../../services/services";
+import { ethers } from "ethers";
+
+const provider: ethers.providers.Web3Provider =
+  new ethers.providers.Web3Provider(window.ethereum);
+
+
 
 const InviteGroupUsersModal = ({ show, setShow, groupName }: any) => {
   const [ load,setLoad] = useState(false)
@@ -14,9 +20,18 @@ const InviteGroupUsersModal = ({ show, setShow, groupName }: any) => {
         onFinish={async (value) => {
           console.log(value);
           setLoad(true)
+
+          const EnsRegex = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/ig
+          let employeeAddress = value.employeeAddress;
+
+          if (EnsRegex.test(value.employeeAddress)) {
+            const resolver = await provider.getResolver(value.employeeAddress);
+            employeeAddress = resolver?.address;
+          }
+
           const res = await addEmployeeToGroup(
             value.groupName,
-            value.employeeAddress
+            employeeAddress
           );
           console.log("address added", res);
           setLoad(false)
@@ -27,7 +42,7 @@ const InviteGroupUsersModal = ({ show, setShow, groupName }: any) => {
         <Form.Item label="Employee Address" name="employeeAddress">
           <Input
             prefix={<FaEthereum />}
-            placeholder="User Wallet Address"
+            placeholder="User Wallet Address or User ENS Name"
             className="search-bar-common"
             style={{ width: "100%" }}
           />
