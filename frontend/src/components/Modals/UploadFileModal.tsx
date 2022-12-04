@@ -1,5 +1,5 @@
 import { Button, Form, Upload, UploadProps } from "antd";
-import React from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { handleFileUpload } from "../../services/fileUpload";
 import ModalComponent from "../common/ModalComponent";
@@ -24,6 +24,7 @@ const props: UploadProps = {
 const UploadFileModal = ({ show, setShow }: any) => {
   const params = useParams();
   const { groupname } = params;
+  const [load,setLoad]  = useState(false)
   return (
     <ModalComponent
       show={show}
@@ -33,6 +34,7 @@ const UploadFileModal = ({ show, setShow }: any) => {
     >
       <Form
         onFinish={async (value) => {
+          setLoad(true)
           const fileObject = value.fileUpload.file;
           const finalGroup = groupname || "default";
           const decryptedFileObject: any = await handleFileUpload(
@@ -50,6 +52,8 @@ const UploadFileModal = ({ show, setShow }: any) => {
             console.log("link", link);
             link.click();
           }
+          setLoad(false)
+          setShow(false)
         }}
         layout="vertical"
       >
@@ -86,6 +90,7 @@ const UploadFileModal = ({ show, setShow }: any) => {
           type="primary"
           htmlType="submit"
           style={{ width: "10rem" }}
+          loading={load}
         >
           Submit
         </SquadButton>

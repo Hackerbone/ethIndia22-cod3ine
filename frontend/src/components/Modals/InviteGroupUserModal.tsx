@@ -1,22 +1,26 @@
 import { Form, Input, Select } from "antd";
-import React from "react";
+import React, { useState } from "react";
 import { FaEthereum } from "react-icons/fa";
 import ModalComponent from "../common/ModalComponent";
 import SquadButton from "../common/SquadButton";
 import { addEmployeeToGroup } from "../../services/services";
 
 const InviteGroupUsersModal = ({ show, setShow, groupName }: any) => {
+  const [ load,setLoad] = useState(false)
   return (
     <ModalComponent show={show} setShow={setShow} title="Invite User to Group">
       <Form
         style={{ marginTop: "5rem", marginBottom: "2rem" }}
         onFinish={async (value) => {
           console.log(value);
+          setLoad(true)
           const res = await addEmployeeToGroup(
             value.groupName,
             value.employeeAddress
           );
           console.log("address added", res);
+          setLoad(false)
+          setShow(false);
         }}
         layout="vertical"
       >
@@ -48,6 +52,7 @@ const InviteGroupUsersModal = ({ show, setShow, groupName }: any) => {
           type="primary"
           htmlType="submit"
           style={{ marginTop: "2rem" }}
+          loading={load}
         >
           Invite
         </SquadButton>

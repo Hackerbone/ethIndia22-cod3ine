@@ -11,14 +11,7 @@ import InviteUsersModal from "../../components/Modals/InviteUsersModal";
 import { getAllEmployees } from "../../services/services";
 
 const Users = () => {
-  const [data, setData] = useState([
-    {
-      key: 1,
-      displayName: "Sitaraman",
-      address: "dummy",
-      groups: 3,
-    },
-  ]);
+  const [data, setData] = useState<any>([]);
 
   const menu = (
     <Menu
@@ -78,23 +71,29 @@ const Users = () => {
       ),
     },
   ];
-  useEffect(() => {
-    const getEmpOrg = async () => {
-      const res = await getAllEmployees();
-      console.log("Organisation details", res);
-      let tableData = [...data];
-      res.forEach((val: any[], ind: number) => {
-        console.log(val);
-        tableData.push({
-          key: ind + 2,
-          displayName: val[0],
-          address: val[1],
-          groups: 3,
-        });
-        setData(tableData);
+
+  const getEmpOrg = async () => {
+    const res = await getAllEmployees();
+    console.log("Organisation details", res);
+    let tableData = [...data];
+    res.forEach((val: any[], ind: number) => {
+      console.log(val);
+      tableData.push({
+        key: ind +1,
+        displayName: val[0],
+        address: val[1],
+        groups: 3,
       });
-    };
-    getEmpOrg();
+      setData(tableData);
+    });
+  };
+
+  useEffect(() => {
+   const interval = setInterval(async() => {
+      await getEmpOrg();
+    },2000)
+    return () => clearInterval(interval)
+    
   }, []);
   const [showModal, setShowModal] = useState(false);
   return (

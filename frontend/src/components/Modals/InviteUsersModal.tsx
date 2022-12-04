@@ -1,11 +1,12 @@
 import { Form, Input, Select } from "antd";
-import React from "react";
+import React, { useState } from "react";
 import { FaEthereum } from "react-icons/fa";
 import ModalComponent from "../common/ModalComponent";
 import SquadButton from "../common/SquadButton";
 import { addEmployee } from "../../services/services";
 
 const InviteUsersModal = ({ show, setShow }: any) => {
+  const [load,setLoad] = useState(false)
   return (
     <ModalComponent
       show={show}
@@ -16,10 +17,13 @@ const InviteUsersModal = ({ show, setShow }: any) => {
         style={{ marginTop: "5rem", marginBottom: "2rem" }}
         onFinish={async (value) => {
           console.log(value);
+          setLoad(true)
           const res = await addEmployee(
             value.employeeAddress,
             value.employeeName
           );
+          setLoad(false)
+          setShow(false);
           console.log("address added", res);
         }}
         layout="vertical"
@@ -52,6 +56,7 @@ const InviteUsersModal = ({ show, setShow }: any) => {
           type="primary"
           htmlType="submit"
           style={{ marginTop: "2rem" }}
+          loading={load}
         >
           Invite
         </SquadButton>
